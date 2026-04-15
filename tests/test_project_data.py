@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from project.data.dataset_builder import build_pair_table
+from project.data.dataset_builder import build_pair_table, resolve_metadata_csv_path
 from project.data.splits import assign_split_labels
 from project.data.window_dataset import (
     apply_normalization,
@@ -186,6 +186,29 @@ class TestProjectDataHelpers(unittest.TestCase):
         self.assertIn("overall", summary)
         self.assertIn("per_motion", summary)
         self.assertEqual(set(summary["per_motion"]["motion_name"]), {"slow1", "fast"})
+
+    def test_resolve_metadata_csv_path_recovers_from_old_absolute_path(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dataset_root = Path(tmpdir) / "dataset"
+            csv_path = dataset_root / "arm" / "exp02" / "motion01_canonical1" / "exp02_motion01_imu_rigid.csv"
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
+            csv_path.write_text(
+                "# sampling frequency: 40\n"
+                "# units are seconds/meters/radians/a.u.\n"
+                "seg1_acc_x,seg1_acc_y,seg1_acc_z,seg1_gyr_x,seg1_gyr_y,seg1_gyr_z\n"
+                "1,2,3,4,5,6\n",
+                encoding="utf-8",
+            )
+            pair_row = pd.Series(
+                {
+                    "kc_type": "arm",
+                    "experiment_id": "exp02",
+                    "motion_folder": "motion01_canonical1",
+                    "rigid_path": r"z:\old_machine\dataset\arm\exp02\motion01_canonical1\exp02_motion01_imu_rigid.csv",
+                }
+            )
+            resolved = resolve_metadata_csv_path(pair_row, "rigid_path", dataset_root)
+            self.assertEqual(resolved.resolve(), csv_path.resolve())
 
 
 if __name__ == "__main__":

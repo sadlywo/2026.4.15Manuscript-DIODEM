@@ -24,6 +24,58 @@ from project.utils.io import (
 DEFAULT_SEGMENTS = [f"seg{i}" for i in range(1, 6)]
 
 
+def _split_path_parts(path_text: str) -> List[str]:
+    normalized = str(path_text).replace("\\", "/")
+    return [part for part in normalized.split("/") if part]
+
+
+def make_portable_dataset_path(raw_path: str, pair_row: pd.Series) -> str:
+    """Convert a metadata path into a dataset-relative portable path string."""
+    parts = _split_path_parts(raw_path)
+    if "dataset" in parts:
+        dataset_index = parts.index("dataset")
+        relative_parts = parts[dataset_index + 1 :]
+        if relative_parts:
+            return "/".join(relative_parts)
+
+    file_name = Path(str(raw_path).replace("\\", "/")).name
+    fallback = [
+        str(pair_row["kc_type"]),
+        str(pair_row["experiment_id"]),
+        str(pair_row["motion_folder"]),
+        file_name,
+    ]
+    return "/".join(fallback)
+
+
+def resolve_metadata_csv_path(pair_row: pd.Series, path_column: str, dataset_root: Path) -> Path:
+    """Resolve a cached CSV path robustly across machines and operating systems."""
+    raw_path = str(pair_row[path_column]).strip()
+    path_candidate = Path(raw_path)
+    if path_candidate.exists():
+        return path_candidate.resolve()
+
+    portable_path = make_portable_dataset_path(raw_path, pair_row)
+    portable_candidate = (dataset_root / Path(portable_path)).resolve()
+    if portable_candidate.exists():
+        return portable_candidate
+
+    file_name = Path(raw_path.replace("\\", "/")).name
+    fallback_candidate = (
+        dataset_root
+        / str(pair_row["kc_type"])
+        / str(pair_row["experiment_id"])
+        / str(pair_row["motion_folder"])
+        / file_name
+    ).resolve()
+    if fallback_candidate.exists():
+        return fallback_candidate
+
+    raise FileNotFoundError(
+        f"Could not resolve {path_column}={raw_path!r} under dataset_root={dataset_root}"
+    )
+
+
 def build_pair_table(
     metadata_df: pd.DataFrame,
     selected_df: pd.DataFrame | None = None,
@@ -80,8 +132,8 @@ def build_pair_table(
                     "motion_index": motion_index,
                     "motion_name": motion_name,
                     "segment_id": segment_id,
-                    "rigid_path": str(rigid_row["path"]),
-                    "nonrigid_path": str(nonrigid_row["path"]),
+                    "rigid_path": make_portable_dataset_path(str(rigid_row["path"]), rigid_row),
+                    "nonrigid_path": make_portable_dataset_path(str(nonrigid_row["path"]), nonrigid_row),
                     "sampling_frequency": rigid_fs,
                     "n_samples": int(rigid_row["n_samples"]),
                     "is_anomaly_case": is_anomaly,
@@ -95,6 +147,7 @@ def _resolve_project_paths(config: Dict[str, Any]) -> Dict[str, Path]:
     repo_root = Path(config["repo_root"])
     return {
         "repo_root": repo_root,
+        "dataset_root": (repo_root / config["dataset_root"]).resolve(),
         "metadata_summary": (repo_root / config["metadata_summary"]).resolve(),
         "selected_examples": (repo_root / config["selected_examples"]).resolve(),
         "processed_root": ensure_dir((repo_root / config["processed_root"]).resolve()),
@@ -114,9 +167,10 @@ def _build_windows_for_pair(
     window_size: int,
     stride: int,
     csv_cache: Dict[Path, Dict[str, Any]],
+    dataset_root: Path,
 ) -> Tuple[np.ndarray, np.ndarray, List[Dict[str, Any]]]:
-    rigid_path = Path(pair_row["rigid_path"])
-    nonrigid_path = Path(pair_row["nonrigid_path"])
+    rigid_path = resolve_metadata_csv_path(pair_row, "rigid_path", dataset_root)
+    nonrigid_path = resolve_metadata_csv_path(pair_row, "nonrigid_path", dataset_root)
     rigid_loaded = _load_or_cache_csv(rigid_path, csv_cache)
     nonrigid_loaded = _load_or_cache_csv(nonrigid_path, csv_cache)
 
@@ -220,6 +274,7 @@ def build_processed_splits(config: Dict[str, Any]) -> Dict[str, Path]:
                 window_size,
                 stride,
                 csv_cache,
+                paths["dataset_root"],
             )
             if len(window_metadata) == 0:
                 continue
