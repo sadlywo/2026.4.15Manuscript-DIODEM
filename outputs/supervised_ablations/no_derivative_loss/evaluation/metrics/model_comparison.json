@@ -1,0 +1,15 @@
+{
+  "models": [
+    {
+      "acc_norm_rmse": 0.11900787553385346,
+      "gyr_norm_rmse": 0.12274509544264675,
+      "hf_ratio_improvement_mean": 5.682104480283719,
+      "model_name": "tcn",
+      "model_role": "trained",
+      "num_windows": 8633,
+      "pearson_mean": 0.8489858323707952,
+      "psd_distance_mean": 0.006683566844340593,
+      "rmse_mean": 0.11675491185346941
+    }
+  ]
+}
