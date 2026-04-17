@@ -1,0 +1,68 @@
+dataset_root: dataset
+metadata_summary: outputs/metadata_summary.csv
+selected_examples: outputs/selected_examples.csv
+processed_root: processed
+outputs_root: outputs/supervised_transformer
+
+split_strategy: by_experiment
+by_experiment:
+  train: [exp02, exp03, exp04, exp05, exp06, exp07, exp08]
+  val: [exp09]
+  test: [exp01, exp10, exp11]
+by_motion_type:
+  train: [canonical, canonical1, canonical2, pause, pause1, pause2, pause3, pause4, slow, slow1, slow2, fast, dangle1, dangle2, dangle3, dangle4, slow_global, fast_global, fast_slow, fast_slow_fast, slow_fast_mix, slow_fast_freeze_mix, pickandplace]
+  val: [quasistatic1, quasistatic2]
+  test: [gait_fast, gait_slow, shaking, rotation, explosiv]
+by_chain:
+  train: [arm]
+  val: [arm]
+  test: [gait]
+anomaly:
+  mode: exclude_all
+
+window_size: 64
+stride: 16
+sampling_frequency: 40.0
+
+input_channels: [acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z]
+target_channels: [acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z]
+normalization: per_channel_zscore
+
+model_name: transformer
+model:
+  hidden_dim: 64
+  dropout: 0.1
+  num_layers: 4
+  kernel_size: 3
+  attach_latent_dim: 8
+  mlp_hidden_dim: 128
+  gru_hidden_dim: 128
+  gru_num_layers: 2
+  transformer_model_dim: 128
+  transformer_num_layers: 3
+  transformer_num_heads: 4
+  transformer_ff_dim: 256
+
+batch_size: 64
+num_epochs: 50
+learning_rate: 0.001
+weight_decay: 0.0001
+patience: 8
+seed: 42
+device: cuda
+num_workers: 0
+
+loss_weights:
+  time_l1: 1.0
+  mse: 0.5
+  derivative: 0.3
+  spectral: 0.2
+  smoothness: 0.0
+  attach_l2: 0.0
+  attach_temporal: 0.0
+
+evaluation:
+  max_visualizations: 8
+  checkpoint_name: best.pt
+  baseline_models: [identity, lowpass]
+  trained_model_checkpoints: []

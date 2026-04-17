@@ -56,7 +56,6 @@ arm,exp01,motion11_slow2,motion11,slow2,seg4,arm/exp01/motion11_slow2/exp01_moti
 arm,exp01,motion11_slow2,motion11,slow2,seg5,arm/exp01/motion11_slow2/exp01_motion11_imu_rigid.csv,arm/exp01/motion11_slow2/exp01_motion11_imu_nonrigid.csv,40.0,640,False,test
 arm,exp01,motion12_shaking,motion12,shaking,seg1,arm/exp01/motion12_shaking/exp01_motion12_imu_rigid.csv,arm/exp01/motion12_shaking/exp01_motion12_imu_nonrigid.csv,40.0,720,False,test
 arm,exp01,motion12_shaking,motion12,shaking,seg2,arm/exp01/motion12_shaking/exp01_motion12_imu_rigid.csv,arm/exp01/motion12_shaking/exp01_motion12_imu_nonrigid.csv,40.0,720,False,test
-arm,exp01,motion12_shaking,motion12,shaking,seg3,arm/exp01/motion12_shaking/exp01_motion12_imu_rigid.csv,arm/exp01/motion12_shaking/exp01_motion12_imu_nonrigid.csv,40.0,720,True,test
 arm,exp01,motion12_shaking,motion12,shaking,seg4,arm/exp01/motion12_shaking/exp01_motion12_imu_rigid.csv,arm/exp01/motion12_shaking/exp01_motion12_imu_nonrigid.csv,40.0,720,False,test
 arm,exp01,motion12_shaking,motion12,shaking,seg5,arm/exp01/motion12_shaking/exp01_motion12_imu_rigid.csv,arm/exp01/motion12_shaking/exp01_motion12_imu_nonrigid.csv,40.0,720,False,test
 arm,exp01,motion13_pause4,motion13,pause4,seg1,arm/exp01/motion13_pause4/exp01_motion13_imu_rigid.csv,arm/exp01/motion13_pause4/exp01_motion13_imu_nonrigid.csv,40.0,1000,False,test

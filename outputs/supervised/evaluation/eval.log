@@ -1,0 +1,6 @@
+[2026-04-15 12:44:59,156] INFO - Evaluation finished for 8675 windows.
+[2026-04-15 14:46:35,424] INFO - Evaluation finished for 8675 windows.
+[2026-04-15 15:36:34,895] INFO - Evaluation finished for 8633 windows. Compared 3 models.
+[2026-04-17 11:29:27,168] INFO - Evaluation finished for 8633 windows. Compared 3 models.
+[2026-04-17 13:04:38,529] INFO - Evaluation finished for 8633 windows. Compared 5 models.
+[2026-04-17 13:04:38,529] INFO - Saved per-motion delta table to /root/2026.4.15Manuscript-DIODEM/outputs/supervised/evaluation/metrics/per_motion_delta_tcn_vs_lowpass.csv.

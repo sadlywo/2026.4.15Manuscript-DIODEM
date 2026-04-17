@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from project.evaluation.evaluate import evaluate_checkpoint
 from project.utils.io import ensure_dir, load_yaml_config

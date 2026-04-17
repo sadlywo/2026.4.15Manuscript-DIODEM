@@ -1,0 +1,2 @@
+model_name,model_role,num_windows,rmse_mean,acc_norm_rmse,gyr_norm_rmse,pearson_mean,hf_ratio_improvement_mean,psd_distance_mean
+tcn,trained,8633,0.11546993903940339,0.11815200699021317,0.12168318429069584,0.8509977600932553,5.754332031067911,0.006554975423319917

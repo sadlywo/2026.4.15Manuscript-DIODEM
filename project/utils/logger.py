@@ -9,9 +9,9 @@ def get_logger(name: str, log_path: Path | None = None) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     logger.propagate = False
-
-    if logger.handlers:
-        return logger
+    for handler in list(logger.handlers):
+        logger.removeHandler(handler)
+        handler.close()
 
     formatter = logging.Formatter("[%(asctime)s] %(levelname)s - %(message)s")
 
@@ -25,4 +25,3 @@ def get_logger(name: str, log_path: Path | None = None) -> logging.Logger:
         logger.addHandler(file_handler)
 
     return logger
-

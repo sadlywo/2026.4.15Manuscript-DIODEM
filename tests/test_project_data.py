@@ -12,7 +12,16 @@ from project.data.window_dataset import (
     fit_normalization_stats,
     generate_window_start_indices,
 )
+from project.evaluation.evaluate import (
+    _build_comparison_frame,
+    _build_group_delta_frame,
+    _get_baseline_model_names,
+)
+from project.experiments.ablation import build_ablation_config
+from project.models import build_model
+from project.training.losses import CompositeLoss
 from project.training.metrics import summarize_window_metrics
+from project.utils.torch_compat import TORCH_AVAILABLE, torch
 
 
 class TestProjectDataHelpers(unittest.TestCase):
@@ -86,6 +95,20 @@ class TestProjectDataHelpers(unittest.TestCase):
         starts = generate_window_start_indices(length=160, window_size=64, stride=16)
         self.assertEqual(starts, [0, 16, 32, 48, 64, 80, 96])
 
+    def test_assign_split_labels_excludes_all_anomaly_cases(self):
+        config = {
+            "strategy": "by_experiment",
+            "by_experiment": {
+                "train": ["exp02"],
+                "val": ["exp01"],
+                "test": ["exp10"],
+            },
+            "anomaly": {"mode": "exclude_all"},
+        }
+        labeled = assign_split_labels(self.pairs_df, config)
+        self.assertEqual(set(labeled["experiment_id"]), {"exp02", "exp10"})
+        self.assertFalse(labeled["is_anomaly_case"].any())
+
     def test_fit_and_apply_per_channel_normalization(self):
         samples = {
             "inputs": np.array(
@@ -107,6 +130,36 @@ class TestProjectDataHelpers(unittest.TestCase):
         normalized = apply_normalization(samples, stats, normalization="per_channel_zscore")
         self.assertEqual(tuple(normalized["inputs"].shape), (2, 2, 2))
         self.assertTrue(np.allclose(normalized["inputs"].mean(axis=(0, 1)), 0.0, atol=1e-6))
+        self.assertEqual(normalized["inputs"].dtype, np.float32)
+        self.assertEqual(normalized["targets"].dtype, np.float32)
+
+    def test_apply_normalization_keeps_float32_with_json_loaded_stats(self):
+        samples = {
+            "inputs": np.array(
+                [
+                    [[1.0, 2.0], [3.0, 4.0]],
+                    [[5.0, 6.0], [7.0, 8.0]],
+                ],
+                dtype=np.float32,
+            ),
+            "targets": np.array(
+                [
+                    [[2.0, 3.0], [4.0, 5.0]],
+                    [[6.0, 7.0], [8.0, 9.0]],
+                ],
+                dtype=np.float32,
+            ),
+        }
+        stats = {
+            "mode": "per_channel_zscore",
+            "input_mean": [4.0, 5.0],
+            "input_std": [2.2360679, 2.2360679],
+            "target_mean": [5.0, 6.0],
+            "target_std": [2.2360679, 2.2360679],
+        }
+        normalized = apply_normalization(samples, stats, normalization="per_channel_zscore")
+        self.assertEqual(normalized["inputs"].dtype, np.float32)
+        self.assertEqual(normalized["targets"].dtype, np.float32)
 
     def test_build_pair_table_marks_anomaly_case(self):
         metadata_df = pd.DataFrame(
@@ -209,6 +262,190 @@ class TestProjectDataHelpers(unittest.TestCase):
             )
             resolved = resolve_metadata_csv_path(pair_row, "rigid_path", dataset_root)
             self.assertEqual(resolved.resolve(), csv_path.resolve())
+
+    def test_get_baseline_model_names_skips_primary_and_duplicates(self):
+        config = {
+            "model_name": "tcn",
+            "evaluation": {"baseline_models": ["identity", "lowpass", "identity", "tcn"]},
+        }
+        self.assertEqual(_get_baseline_model_names(config), ["identity", "lowpass"])
+
+    def test_build_comparison_frame_marks_model_roles(self):
+        frame = _build_comparison_frame(
+            overall_by_model={
+                "tcn": {"rmse_mean": 0.1, "pearson_mean": 0.9, "num_windows": 10},
+                "gru": {"rmse_mean": 0.11, "pearson_mean": 0.88, "num_windows": 10},
+                "identity": {"rmse_mean": 0.3, "pearson_mean": 0.6, "num_windows": 10},
+            },
+            primary_model_name="tcn",
+            model_roles={"gru": "trained_comparison"},
+        )
+        self.assertEqual(list(frame["model_name"]), ["tcn", "gru", "identity"])
+        self.assertEqual(list(frame["model_role"]), ["trained", "trained_comparison", "baseline"])
+
+    def test_build_group_delta_frame_computes_metric_deltas(self):
+        candidate_frame = pd.DataFrame(
+            [
+                {"motion_name": "fast", "rmse_mean": 0.10, "pearson_mean": 0.92, "psd_distance_mean": 0.01},
+                {"motion_name": "slow", "rmse_mean": 0.05, "pearson_mean": 0.95, "psd_distance_mean": 0.005},
+            ]
+        )
+        reference_frame = pd.DataFrame(
+            [
+                {"motion_name": "fast", "rmse_mean": 0.14, "pearson_mean": 0.88, "psd_distance_mean": 0.02},
+                {"motion_name": "slow", "rmse_mean": 0.07, "pearson_mean": 0.93, "psd_distance_mean": 0.009},
+            ]
+        )
+        delta_frame = _build_group_delta_frame(
+            candidate_frame=candidate_frame,
+            reference_frame=reference_frame,
+            group_column="motion_name",
+            candidate_name="tcn",
+            reference_name="lowpass",
+        )
+        fast_row = delta_frame.loc[delta_frame["motion_name"] == "fast"].iloc[0]
+        self.assertAlmostEqual(float(fast_row["rmse_mean_delta_tcn_minus_lowpass"]), -0.04, places=6)
+        self.assertAlmostEqual(float(fast_row["pearson_mean_delta_tcn_minus_lowpass"]), 0.04, places=6)
+
+    def test_tcn_attachment_model_returns_latent_state_bundle(self):
+        if not TORCH_AVAILABLE:
+            self.skipTest("PyTorch is not available in this environment.")
+        model = build_model(
+            model_name="tcn",
+            input_dim=6,
+            output_dim=6,
+            model_config={
+                "hidden_dim": 16,
+                "num_layers": 2,
+                "kernel_size": 3,
+                "dropout": 0.0,
+                "attach_latent_dim": 4,
+            },
+        )
+        batch = torch.randn(3, 8, 6)
+        outputs = model(batch)
+        self.assertIsInstance(outputs, dict)
+        self.assertEqual(tuple(outputs["predictions"].shape), (3, 8, 6))
+        self.assertEqual(tuple(outputs["residual"].shape), (3, 8, 6))
+        self.assertEqual(tuple(outputs["z_attach"].shape), (3, 4))
+        self.assertEqual(tuple(outputs["z_attach_sequence"].shape), (3, 8, 4))
+
+    def test_tcn_model_supports_disabling_attachment_latent(self):
+        if not TORCH_AVAILABLE:
+            self.skipTest("PyTorch is not available in this environment.")
+        model = build_model(
+            model_name="tcn",
+            input_dim=6,
+            output_dim=6,
+            model_config={
+                "hidden_dim": 16,
+                "num_layers": 2,
+                "kernel_size": 3,
+                "dropout": 0.0,
+                "attach_latent_dim": 0,
+            },
+        )
+        batch = torch.randn(2, 8, 6)
+        outputs = model(batch)
+        self.assertEqual(tuple(outputs["predictions"].shape), (2, 8, 6))
+        self.assertEqual(tuple(outputs["residual"].shape), (2, 8, 6))
+        self.assertNotIn("z_attach", outputs)
+        self.assertNotIn("z_attach_sequence", outputs)
+
+    def test_composite_loss_accepts_attachment_aux_outputs(self):
+        if not TORCH_AVAILABLE:
+            self.skipTest("PyTorch is not available in this environment.")
+        criterion = CompositeLoss(
+            {
+                "time_l1": 1.0,
+                "mse": 0.5,
+                "derivative": 0.25,
+                "spectral": 0.1,
+                "attach_l2": 0.01,
+                "attach_temporal": 0.01,
+            }
+        )
+        predictions = torch.randn(2, 10, 3)
+        targets = torch.randn(2, 10, 3)
+        aux_outputs = {
+            "z_attach": torch.randn(2, 4),
+            "z_attach_sequence": torch.randn(2, 10, 4),
+        }
+        terms = criterion(predictions, targets, aux_outputs=aux_outputs)
+        self.assertIn("l1", terms)
+        self.assertIn("derivative", terms)
+        self.assertIn("spectral", terms)
+        self.assertIn("attach_l2", terms)
+        self.assertIn("attach_temporal", terms)
+        self.assertGreaterEqual(float(terms["total"]), 0.0)
+
+    def test_gru_and_transformer_models_return_prediction_bundle(self):
+        if not TORCH_AVAILABLE:
+            self.skipTest("PyTorch is not available in this environment.")
+        batch = torch.randn(2, 12, 6)
+
+        gru_model = build_model(
+            model_name="gru",
+            input_dim=6,
+            output_dim=6,
+            model_config={"gru_hidden_dim": 16, "gru_num_layers": 2, "dropout": 0.0},
+        )
+        gru_outputs = gru_model(batch)
+        self.assertIsInstance(gru_outputs, dict)
+        self.assertEqual(tuple(gru_outputs["predictions"].shape), (2, 12, 6))
+        self.assertEqual(tuple(gru_outputs["residual"].shape), (2, 12, 6))
+
+        transformer_model = build_model(
+            model_name="transformer",
+            input_dim=6,
+            output_dim=6,
+            model_config={
+                "transformer_model_dim": 16,
+                "transformer_num_layers": 2,
+                "transformer_num_heads": 4,
+                "transformer_ff_dim": 32,
+                "dropout": 0.0,
+            },
+        )
+        transformer_outputs = transformer_model(batch)
+        self.assertIsInstance(transformer_outputs, dict)
+        self.assertEqual(tuple(transformer_outputs["predictions"].shape), (2, 12, 6))
+        self.assertEqual(tuple(transformer_outputs["residual"].shape), (2, 12, 6))
+
+    def test_build_ablation_config_disables_baseline_comparisons_and_applies_overrides(self):
+        base_config = {
+            "repo_root": "/tmp/repo",
+            "outputs_root": "outputs/supervised",
+            "model_name": "tcn",
+            "model": {"attach_latent_dim": 8},
+            "loss_weights": {
+                "time_l1": 1.0,
+                "mse": 0.5,
+                "derivative": 0.3,
+                "spectral": 0.2,
+                "attach_l2": 0.001,
+                "attach_temporal": 0.001,
+            },
+            "evaluation": {
+                "checkpoint_name": "best.pt",
+                "baseline_models": ["identity", "lowpass"],
+                "trained_model_checkpoints": [{"label": "gru", "checkpoint": "/tmp/gru.pt"}],
+            },
+        }
+        variant = {
+            "name": "no_attachment_latent",
+            "description": "Disable attachment latent code.",
+            "overrides": {
+                "model": {"attach_latent_dim": 0},
+                "loss_weights": {"attach_l2": 0.0, "attach_temporal": 0.0},
+            },
+        }
+        config = build_ablation_config(base_config, variant, outputs_root="outputs/supervised_ablations/no_attachment_latent")
+        self.assertEqual(config["ablation_variant"], "no_attachment_latent")
+        self.assertEqual(config["model"]["attach_latent_dim"], 0)
+        self.assertEqual(config["loss_weights"]["attach_l2"], 0.0)
+        self.assertEqual(config["evaluation"]["baseline_models"], [])
+        self.assertEqual(config["evaluation"]["trained_model_checkpoints"], [])
 
 
 if __name__ == "__main__":

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from typing import Dict
 
+from project.models.gru_model import GRUBaseline
 from project.models.mlp_model import MLPBaseline
 from project.models.tcn_model import TCNBaseline
+from project.models.transformer_model import TransformerBaseline
 from project.utils.torch_compat import TORCH_AVAILABLE, nn, require_torch
 
 
@@ -71,6 +73,8 @@ AVAILABLE_MODELS = {
     "lowpass": LowPassBaseline,
     "linear": LinearProjectionBaseline,
     "mlp": MLPBaseline,
+    "gru": GRUBaseline,
+    "transformer": TransformerBaseline,
     "tcn": TCNBaseline,
 }
 
@@ -94,6 +98,24 @@ def build_model(model_name: str, input_dim: int, output_dim: int, model_config: 
             hidden_dim=int(model_config.get("mlp_hidden_dim", 128)),
             dropout=float(model_config.get("dropout", 0.1)),
         )
+    if name == "gru":
+        return GRUBaseline(
+            input_dim=input_dim,
+            output_dim=output_dim,
+            hidden_dim=int(model_config.get("gru_hidden_dim", 128)),
+            num_layers=int(model_config.get("gru_num_layers", 2)),
+            dropout=float(model_config.get("dropout", 0.1)),
+        )
+    if name == "transformer":
+        return TransformerBaseline(
+            input_dim=input_dim,
+            output_dim=output_dim,
+            model_dim=int(model_config.get("transformer_model_dim", 128)),
+            num_layers=int(model_config.get("transformer_num_layers", 3)),
+            num_heads=int(model_config.get("transformer_num_heads", 4)),
+            feedforward_dim=int(model_config.get("transformer_ff_dim", 256)),
+            dropout=float(model_config.get("dropout", 0.1)),
+        )
     return TCNBaseline(
         input_dim=input_dim,
         output_dim=output_dim,
@@ -101,5 +123,5 @@ def build_model(model_name: str, input_dim: int, output_dim: int, model_config: 
         num_layers=int(model_config.get("num_layers", 4)),
         kernel_size=int(model_config.get("kernel_size", 3)),
         dropout=float(model_config.get("dropout", 0.1)),
+        attach_latent_dim=int(model_config.get("attach_latent_dim", 8)),
     )
-

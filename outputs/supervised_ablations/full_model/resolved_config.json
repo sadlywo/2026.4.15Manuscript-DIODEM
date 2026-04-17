@@ -1,0 +1,142 @@
+{
+  "ablation_variant": "full_model",
+  "ablation_variant_description": "Attachment latent code + composite loss.",
+  "anomaly": {
+    "mode": "exclude_all"
+  },
+  "batch_size": 64,
+  "by_chain": {
+    "test": [
+      "gait"
+    ],
+    "train": [
+      "arm"
+    ],
+    "val": [
+      "arm"
+    ]
+  },
+  "by_experiment": {
+    "test": [
+      "exp01",
+      "exp10",
+      "exp11"
+    ],
+    "train": [
+      "exp02",
+      "exp03",
+      "exp04",
+      "exp05",
+      "exp06",
+      "exp07",
+      "exp08"
+    ],
+    "val": [
+      "exp09"
+    ]
+  },
+  "by_motion_type": {
+    "test": [
+      "gait_fast",
+      "gait_slow",
+      "shaking",
+      "rotation",
+      "explosiv"
+    ],
+    "train": [
+      "canonical",
+      "canonical1",
+      "canonical2",
+      "pause",
+      "pause1",
+      "pause2",
+      "pause3",
+      "pause4",
+      "slow",
+      "slow1",
+      "slow2",
+      "fast",
+      "dangle1",
+      "dangle2",
+      "dangle3",
+      "dangle4",
+      "slow_global",
+      "fast_global",
+      "fast_slow",
+      "fast_slow_fast",
+      "slow_fast_mix",
+      "slow_fast_freeze_mix",
+      "pickandplace"
+    ],
+    "val": [
+      "quasistatic1",
+      "quasistatic2"
+    ]
+  },
+  "config_dir": "/root/2026.4.15Manuscript-DIODEM/project/configs",
+  "config_path": "/root/2026.4.15Manuscript-DIODEM/project/configs/default.yaml",
+  "dataset_root": "dataset",
+  "device": "cuda",
+  "evaluation": {
+    "baseline_models": [],
+    "checkpoint_name": "best.pt",
+    "max_visualizations": 8,
+    "trained_model_checkpoints": []
+  },
+  "input_channels": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+  ],
+  "learning_rate": 0.001,
+  "loss_weights": {
+    "attach_l2": 0.001,
+    "attach_temporal": 0.001,
+    "derivative": 0.3,
+    "mse": 0.5,
+    "smoothness": 0.0,
+    "spectral": 0.2,
+    "time_l1": 1.0
+  },
+  "metadata_summary": "outputs/metadata_summary.csv",
+  "model": {
+    "attach_latent_dim": 8,
+    "dropout": 0.1,
+    "gru_hidden_dim": 128,
+    "gru_num_layers": 2,
+    "hidden_dim": 64,
+    "kernel_size": 3,
+    "mlp_hidden_dim": 128,
+    "num_layers": 4,
+    "transformer_ff_dim": 256,
+    "transformer_model_dim": 128,
+    "transformer_num_heads": 4,
+    "transformer_num_layers": 3
+  },
+  "model_name": "tcn",
+  "normalization": "per_channel_zscore",
+  "num_epochs": 50,
+  "num_workers": 0,
+  "outputs_root": "outputs/supervised_ablations/full_model",
+  "patience": 8,
+  "processed_root": "processed",
+  "repo_root": "/root/2026.4.15Manuscript-DIODEM",
+  "sampling_frequency": 40.0,
+  "seed": 42,
+  "selected_examples": "outputs/selected_examples.csv",
+  "split_strategy": "by_experiment",
+  "stride": 16,
+  "target_channels": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+  ],
+  "weight_decay": 0.0001,
+  "window_size": 64
+}

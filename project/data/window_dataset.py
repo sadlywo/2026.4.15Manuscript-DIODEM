@@ -63,9 +63,13 @@ def apply_normalization(
 
     inputs = np.asarray(samples["inputs"], dtype=np.float32)
     targets = np.asarray(samples["targets"], dtype=np.float32)
+    input_mean = np.asarray(stats["input_mean"], dtype=np.float32)
+    input_std = np.asarray(stats["input_std"], dtype=np.float32)
+    target_mean = np.asarray(stats["target_mean"], dtype=np.float32)
+    target_std = np.asarray(stats["target_std"], dtype=np.float32)
     normalized = {
-        "inputs": (inputs - stats["input_mean"]) / stats["input_std"],
-        "targets": (targets - stats["target_mean"]) / stats["target_std"],
+        "inputs": ((inputs - input_mean) / input_std).astype(np.float32),
+        "targets": ((targets - target_mean) / target_std).astype(np.float32),
     }
     return normalized
 
@@ -122,4 +126,3 @@ def windowed_pair_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]:
     targets = torch.stack([sample["targets"] for sample in batch], dim=0)
     metadata = [sample["metadata"] for sample in batch]
     return {"inputs": inputs, "targets": targets, "metadata": metadata}
-

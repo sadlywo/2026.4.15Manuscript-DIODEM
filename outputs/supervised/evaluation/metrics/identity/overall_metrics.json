@@ -1,0 +1,9 @@
+{
+  "acc_norm_rmse": 0.25237926266691324,
+  "gyr_norm_rmse": 0.3454668104249059,
+  "hf_ratio_improvement_mean": 0.0,
+  "num_windows": 8633,
+  "pearson_mean": 0.7254491385123033,
+  "psd_distance_mean": 0.024807907708955634,
+  "rmse_mean": 0.2555297214083152
+}

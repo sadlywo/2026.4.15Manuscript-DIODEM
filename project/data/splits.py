@@ -36,6 +36,8 @@ def apply_anomaly_policy(frame: pd.DataFrame, config: Dict[str, object]) -> pd.D
 
     if mode == "include_all":
         return result
+    if mode == "exclude_all":
+        return result.loc[~result["is_anomaly_case"]].reset_index(drop=True)
     if mode == "exclude_from_train":
         mask = result["is_anomaly_case"] & (result["split"] == "train")
         result.loc[mask, "split"] = "exclude"
@@ -66,4 +68,3 @@ def assign_split_labels(pairs_df: pd.DataFrame, split_config: Dict[str, object])
     result = apply_anomaly_policy(result, split_config)
     valid_mask = result["split"].isin(["train", "val", "test"])
     return result.loc[valid_mask].reset_index(drop=True)
-
