@@ -65,12 +65,13 @@ def compute_window_metrics(
     channels: List[str],
     sampling_frequency: float,
 ) -> Dict[str, Any]:
-    """Compute all evaluation metrics for one cached window."""
+    """Compute all evaluation metrics for one cached window in the signal's native units."""
     if prediction.shape != target.shape or prediction.shape != input_signal.shape:
         raise ValueError("Prediction, target, and input windows must share the same shape.")
 
     row: Dict[str, Any] = dict(metadata)
     per_channel_rmse = []
+    per_channel_input_rmse = []
     per_channel_corr = []
     per_channel_psd = []
     for channel_idx, channel_name in enumerate(channels):
@@ -86,6 +87,7 @@ def compute_window_metrics(
             sampling_frequency,
         )
         per_channel_rmse.append(row[f"rmse_{channel_name}"])
+        per_channel_input_rmse.append(row[f"input_rmse_{channel_name}"])
         per_channel_corr.append(row[f"pearson_{channel_name}"])
         per_channel_psd.append(row[f"psd_distance_{channel_name}"])
 
@@ -97,10 +99,27 @@ def compute_window_metrics(
     input_gyr_norm = _compute_signal_norm(input_signal, channels, "gyr_")
 
     row["rmse_mean"] = float(np.mean(per_channel_rmse))
+    row["input_rmse_mean"] = float(np.mean(per_channel_input_rmse))
     row["pearson_mean"] = _nanmean(per_channel_corr)
     row["psd_distance_mean"] = _nanmean(per_channel_psd)
     row["acc_norm_rmse"] = compute_rmse(pred_acc_norm, target_acc_norm)
     row["gyr_norm_rmse"] = compute_rmse(pred_gyr_norm, target_gyr_norm)
+    row["input_acc_norm_rmse"] = compute_rmse(input_acc_norm, target_acc_norm)
+    row["input_gyr_norm_rmse"] = compute_rmse(input_gyr_norm, target_gyr_norm)
+    row["acc_channel_rmse_mean"] = _nanmean(
+        [row.get(f"rmse_{channel_name}") for channel_name in channels if channel_name.startswith("acc_")]
+    )
+    row["gyr_channel_rmse_mean"] = _nanmean(
+        [row.get(f"rmse_{channel_name}") for channel_name in channels if channel_name.startswith("gyr_")]
+    )
+    row["input_acc_channel_rmse_mean"] = _nanmean(
+        [row.get(f"input_rmse_{channel_name}") for channel_name in channels if channel_name.startswith("acc_")]
+    )
+    row["input_gyr_channel_rmse_mean"] = _nanmean(
+        [row.get(f"input_rmse_{channel_name}") for channel_name in channels if channel_name.startswith("gyr_")]
+    )
+    row["acc_channel_rmse_improvement"] = float(row["input_acc_channel_rmse_mean"] - row["acc_channel_rmse_mean"])
+    row["gyr_channel_rmse_improvement"] = float(row["input_gyr_channel_rmse_mean"] - row["gyr_channel_rmse_mean"])
 
     input_acc_ratio = (_high_band_power(input_acc_norm, sampling_frequency) + 1e-8) / (
         _high_band_power(target_acc_norm, sampling_frequency) + 1e-8
@@ -127,9 +146,13 @@ def _aggregate_metric_frame(frame: pd.DataFrame, group_column: str) -> pd.DataFr
         col
         for col in frame.columns
         if col.startswith("rmse_")
+        or col.startswith("input_rmse_")
         or col.startswith("pearson_")
         or col.startswith("hf_ratio_")
         or col.startswith("psd_distance_")
+        or col.endswith("_channel_rmse_mean")
+        or col.endswith("_channel_rmse_improvement")
+        or col.endswith("_norm_rmse")
     ]
     return (
         frame.groupby(group_column)[metric_columns]
@@ -157,8 +180,17 @@ def summarize_window_metrics(
     overall = {
         "num_windows": int(len(frame)),
         "rmse_mean": float(frame["rmse_mean"].mean()),
+        "input_rmse_mean": float(frame["input_rmse_mean"].mean()),
         "acc_norm_rmse": float(frame["acc_norm_rmse"].mean()),
         "gyr_norm_rmse": float(frame["gyr_norm_rmse"].mean()),
+        "input_acc_norm_rmse": float(frame["input_acc_norm_rmse"].mean()),
+        "input_gyr_norm_rmse": float(frame["input_gyr_norm_rmse"].mean()),
+        "acc_channel_rmse_mean": float(frame["acc_channel_rmse_mean"].mean()),
+        "gyr_channel_rmse_mean": float(frame["gyr_channel_rmse_mean"].mean()),
+        "input_acc_channel_rmse_mean": float(frame["input_acc_channel_rmse_mean"].mean()),
+        "input_gyr_channel_rmse_mean": float(frame["input_gyr_channel_rmse_mean"].mean()),
+        "acc_channel_rmse_improvement": float(frame["acc_channel_rmse_improvement"].mean()),
+        "gyr_channel_rmse_improvement": float(frame["gyr_channel_rmse_improvement"].mean()),
         "pearson_mean": float(frame["pearson_mean"].mean()),
         "hf_ratio_improvement_mean": float(frame["hf_ratio_improvement_mean"].mean()),
         "psd_distance_mean": float(frame["psd_distance_mean"].mean()),

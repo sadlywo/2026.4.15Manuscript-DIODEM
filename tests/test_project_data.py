@@ -18,6 +18,7 @@ from project.evaluation.evaluate import (
     _get_baseline_model_names,
 )
 from project.experiments.ablation import build_ablation_config
+from project.experiments.runtime import apply_runtime_overrides, build_seed_run_config, resolve_experiment_seeds
 from project.models import build_model
 from project.training.losses import CompositeLoss
 from project.training.metrics import summarize_window_metrics
@@ -108,6 +109,21 @@ class TestProjectDataHelpers(unittest.TestCase):
         labeled = assign_split_labels(self.pairs_df, config)
         self.assertEqual(set(labeled["experiment_id"]), {"exp02", "exp10"})
         self.assertFalse(labeled["is_anomaly_case"].any())
+
+    def test_assign_split_labels_moves_anomaly_cases_to_test(self):
+        config = {
+            "strategy": "by_experiment",
+            "by_experiment": {
+                "train": ["exp01", "exp02"],
+                "val": [],
+                "test": ["exp10"],
+            },
+            "anomaly": {"mode": "test_only"},
+        }
+        labeled = assign_split_labels(self.pairs_df, config)
+        exp01_row = labeled.loc[labeled["experiment_id"] == "exp01"].iloc[0]
+        self.assertEqual(exp01_row["split"], "test")
+        self.assertTrue(bool(exp01_row["is_anomaly_case"]))
 
     def test_fit_and_apply_per_channel_normalization(self):
         samples = {
@@ -266,9 +282,9 @@ class TestProjectDataHelpers(unittest.TestCase):
     def test_get_baseline_model_names_skips_primary_and_duplicates(self):
         config = {
             "model_name": "tcn",
-            "evaluation": {"baseline_models": ["identity", "lowpass", "identity", "tcn"]},
+            "evaluation": {"baseline_models": ["identity", "lowpass", "butterworth", "identity", "tcn"]},
         }
-        self.assertEqual(_get_baseline_model_names(config), ["identity", "lowpass"])
+        self.assertEqual(_get_baseline_model_names(config), ["identity", "lowpass", "butterworth"])
 
     def test_build_comparison_frame_marks_model_roles(self):
         frame = _build_comparison_frame(
@@ -329,6 +345,23 @@ class TestProjectDataHelpers(unittest.TestCase):
         self.assertEqual(tuple(outputs["residual"].shape), (3, 8, 6))
         self.assertEqual(tuple(outputs["z_attach"].shape), (3, 4))
         self.assertEqual(tuple(outputs["z_attach_sequence"].shape), (3, 8, 4))
+
+    def test_classic_filter_baselines_return_expected_shapes(self):
+        if not TORCH_AVAILABLE:
+            self.skipTest("PyTorch is not available in this environment.")
+        batch = torch.randn(2, 64, 6)
+        shared_config = {
+            "sampling_frequency": 40.0,
+            "butter_cutoff_hz": 5.0,
+            "butter_order": 2,
+            "savgol_window_length": 7,
+            "savgol_polyorder": 2,
+            "wiener_window_size": 5,
+        }
+        for model_name in ("butterworth", "savgol", "wiener"):
+            model = build_model(model_name=model_name, input_dim=6, output_dim=6, model_config=shared_config)
+            outputs = model(batch)
+            self.assertEqual(tuple(outputs.shape), (2, 64, 6))
 
     def test_tcn_model_supports_disabling_attachment_latent(self):
         if not TORCH_AVAILABLE:
@@ -446,6 +479,32 @@ class TestProjectDataHelpers(unittest.TestCase):
         self.assertEqual(config["loss_weights"]["attach_l2"], 0.0)
         self.assertEqual(config["evaluation"]["baseline_models"], [])
         self.assertEqual(config["evaluation"]["trained_model_checkpoints"], [])
+
+    def test_runtime_overrides_suffix_paths_and_apply_seed_runs(self):
+        base_config = {
+            "seed": 42,
+            "split_strategy": "by_experiment",
+            "anomaly": {"mode": "exclude_all"},
+            "processed_root": "processed",
+            "outputs_root": "outputs/supervised",
+        }
+        overridden = apply_runtime_overrides(
+            base_config,
+            split_strategy="by_motion_type",
+            anomaly_mode="test_only",
+            run_name=None,
+        )
+        self.assertEqual(overridden["split_strategy"], "by_motion_type")
+        self.assertEqual(overridden["anomaly"]["mode"], "test_only")
+        self.assertIn("processed_by_motion_type_anomaly_test_only", overridden["processed_root"])
+        self.assertIn("supervised_by_motion_type_anomaly_test_only", overridden["outputs_root"])
+
+        seeds = resolve_experiment_seeds(overridden, explicit_seeds=[42, 43, 42])
+        self.assertEqual(seeds, [42, 43])
+
+        seed_config = build_seed_run_config(overridden, seed=43, multi_seed=True)
+        self.assertEqual(seed_config["seed"], 43)
+        self.assertIn("seed_runs", seed_config["outputs_root"])
 
 
 if __name__ == "__main__":

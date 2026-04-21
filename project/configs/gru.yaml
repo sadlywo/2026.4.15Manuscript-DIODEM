@@ -35,6 +35,11 @@ model:
   num_layers: 4
   kernel_size: 3
   attach_latent_dim: 8
+  butter_cutoff_hz: 5.0
+  butter_order: 4
+  savgol_window_length: 9
+  savgol_polyorder: 3
+  wiener_window_size: 7
   mlp_hidden_dim: 128
   gru_hidden_dim: 128
   gru_num_layers: 2
@@ -49,6 +54,7 @@ learning_rate: 0.001
 weight_decay: 0.0001
 patience: 8
 seed: 42
+experiment_seeds: []
 device: cuda
 num_workers: 0
 
@@ -64,5 +70,5 @@ loss_weights:
 evaluation:
   max_visualizations: 8
   checkpoint_name: best.pt
-  baseline_models: [identity, lowpass]
+  baseline_models: [identity, lowpass, butterworth, savgol, wiener]
   trained_model_checkpoints: []

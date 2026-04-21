@@ -60,7 +60,10 @@ if TORCH_AVAILABLE:  # pragma: no branch
             model_name=config["model_name"],
             input_dim=len(config["input_channels"]),
             output_dim=len(config["target_channels"]),
-            model_config=dict(config.get("model", {})),
+            model_config={
+                **dict(config.get("model", {})),
+                "sampling_frequency": float(config["sampling_frequency"]),
+            },
         ).to(device)
         criterion = CompositeLoss(dict(config["loss_weights"]))
         optimizer = torch.optim.Adam(
@@ -146,4 +149,3 @@ else:
 
     def train_model(*args, **kwargs):  # pragma: no cover - runtime safeguard only
         require_torch()
-

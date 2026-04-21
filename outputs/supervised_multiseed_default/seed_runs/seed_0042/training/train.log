@@ -1,0 +1,5 @@
+[2026-04-21 12:59:58,258] INFO - Epoch 1 | train_total=0.271855 | val_total=0.283949
+[2026-04-21 13:04:10,730] INFO - Epoch 2 | train_total=0.210930 | val_total=0.265965
+[2026-04-21 13:08:18,526] INFO - Epoch 3 | train_total=0.199890 | val_total=0.257475
+[2026-04-21 13:12:28,119] INFO - Epoch 4 | train_total=0.193716 | val_total=0.258552
+[2026-04-21 13:16:38,862] INFO - Epoch 5 | train_total=0.189225 | val_total=0.251418
