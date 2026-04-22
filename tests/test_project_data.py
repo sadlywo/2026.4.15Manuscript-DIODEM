@@ -487,6 +487,12 @@ class TestProjectDataHelpers(unittest.TestCase):
             "anomaly": {"mode": "exclude_all"},
             "processed_root": "processed",
             "outputs_root": "outputs/supervised",
+            "evaluation": {
+                "trained_model_checkpoints": [
+                    {"label": "gru", "checkpoint": "outputs/supervised_gru/training/checkpoints/best.pt"},
+                    {"label": "transformer", "checkpoint": "outputs/supervised_transformer/training/checkpoints/best.pt"},
+                ]
+            },
         }
         overridden = apply_runtime_overrides(
             base_config,
@@ -498,6 +504,10 @@ class TestProjectDataHelpers(unittest.TestCase):
         self.assertEqual(overridden["anomaly"]["mode"], "test_only")
         self.assertIn("processed_by_motion_type_anomaly_test_only", overridden["processed_root"])
         self.assertIn("supervised_by_motion_type_anomaly_test_only", overridden["outputs_root"])
+        self.assertIn(
+            "supervised_gru_by_motion_type_anomaly_test_only",
+            overridden["evaluation"]["trained_model_checkpoints"][0]["checkpoint"],
+        )
 
         seeds = resolve_experiment_seeds(overridden, explicit_seeds=[42, 43, 42])
         self.assertEqual(seeds, [42, 43])
@@ -505,6 +515,10 @@ class TestProjectDataHelpers(unittest.TestCase):
         seed_config = build_seed_run_config(overridden, seed=43, multi_seed=True)
         self.assertEqual(seed_config["seed"], 43)
         self.assertIn("seed_runs", seed_config["outputs_root"])
+        self.assertIn(
+            str(Path("seed_runs") / "seed_0043"),
+            seed_config["evaluation"]["trained_model_checkpoints"][0]["checkpoint"],
+        )
 
 
 if __name__ == "__main__":

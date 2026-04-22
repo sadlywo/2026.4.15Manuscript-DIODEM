@@ -73,6 +73,6 @@ evaluation:
   baseline_models: [identity, lowpass, butterworth, savgol, wiener]
   trained_model_checkpoints:
     - label: gru
-      checkpoint: /root/2026.4.15Manuscript-DIODEM/outputs/supervised_gru/training/checkpoints/best.pt
+      checkpoint: outputs/supervised_gru/training/checkpoints/best.pt
     - label: transformer
-      checkpoint: /root/2026.4.15Manuscript-DIODEM/outputs/supervised_transformer/training/checkpoints/best.pt
+      checkpoint: outputs/supervised_transformer/training/checkpoints/best.pt
