@@ -187,6 +187,7 @@ AVAILABLE_MODELS = {
     "gru": GRUBaseline,
     "transformer": TransformerBaseline,
     "tcn": TCNBaseline,
+    "tcn_causal": TCNBaseline,
 }
 
 
@@ -248,4 +249,5 @@ def build_model(model_name: str, input_dim: int, output_dim: int, model_config: 
         kernel_size=int(model_config.get("kernel_size", 3)),
         dropout=float(model_config.get("dropout", 0.1)),
         attach_latent_dim=int(model_config.get("attach_latent_dim", 8)),
+        causal=bool(model_config.get("causal", name == "tcn_causal")),
     )

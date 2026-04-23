@@ -95,18 +95,23 @@ def _load_trained_comparison_specs(config: Dict[str, Any]) -> List[Dict[str, str
     evaluation_config = dict(config.get("evaluation", {}))
     raw_specs = evaluation_config.get("trained_model_checkpoints", [])
     config_dir = Path(config["config_dir"])
+    repo_root = Path(config["repo_root"])
     specs: List[Dict[str, str]] = []
     seen_labels = {str(config["model_name"]).lower()}
     for index, spec in enumerate(raw_specs):
         if isinstance(spec, str):
             label = Path(spec).stem.lower()
-            checkpoint_path = resolve_path(spec, config_dir)
+            checkpoint_path = _resolve_checkpoint_spec_path(spec, repo_root=repo_root, config_dir=config_dir)
         elif isinstance(spec, dict):
             checkpoint_value = spec.get("checkpoint")
             if checkpoint_value is None:
                 raise ValueError("Each `trained_model_checkpoints` item must define `checkpoint`.")
             label = str(spec.get("label") or Path(str(checkpoint_value)).stem).lower()
-            checkpoint_path = resolve_path(str(checkpoint_value), config_dir)
+            checkpoint_path = _resolve_checkpoint_spec_path(
+                str(checkpoint_value),
+                repo_root=repo_root,
+                config_dir=config_dir,
+            )
         else:
             raise ValueError(
                 f"Unsupported trained model checkpoint spec at index {index}: {type(spec).__name__}"
@@ -116,6 +121,23 @@ def _load_trained_comparison_specs(config: Dict[str, Any]) -> List[Dict[str, str
         seen_labels.add(label)
         specs.append({"label": label, "checkpoint_path": str(checkpoint_path)})
     return specs
+
+
+def _resolve_checkpoint_spec_path(path_like: str | Path, repo_root: Path, config_dir: Path) -> Path:
+    path = Path(path_like)
+    if path.is_absolute():
+        return path
+
+    # Comparison checkpoints are configured as repo-relative output paths.
+    repo_candidate = resolve_path(path, repo_root)
+    if repo_candidate.exists():
+        return repo_candidate
+
+    # Fallback keeps support for any config-local relative paths.
+    config_candidate = resolve_path(path, config_dir)
+    if config_candidate.exists():
+        return config_candidate
+    return repo_candidate
 
 
 def _build_group_delta_frame(
