@@ -1,0 +1,7 @@
+model_name,model_role,architecture_name,parameter_count,trainable_parameter_count,parameter_size_mb_fp32,cpu_forward_ms_per_window,embedded_deployment_verdict
+tcn,trained,tcn,101326,101326,0.38652801513671875,1.3966641575098038,possible_on_embedded_linux
+identity,baseline,identity,0,0,0.0,0.0013512186706066132,yes_classical_filter
+lowpass,baseline,lowpass,0,0,0.0,0.03303447738289833,yes_classical_filter
+butterworth,baseline,butterworth,0,0,0.0,2.1213319338858128,yes_classical_filter
+savgol,baseline,savgol,0,0,0.0,2.0928155444562435,yes_classical_filter
+wiener,baseline,wiener,0,0,0.0,0.42993199080228806,yes_classical_filter

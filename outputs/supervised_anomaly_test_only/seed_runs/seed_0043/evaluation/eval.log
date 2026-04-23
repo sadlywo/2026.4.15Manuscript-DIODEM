@@ -1,0 +1,4 @@
+[2026-04-23 16:33:48,018] WARNING - Skipping comparison checkpoint 'gru' because it was not found at /root/2026.4.15Manuscript-DIODEM/project/configs/outputs/supervised_gru_anomaly_test_only/seed_runs/seed_0043/training/checkpoints/best.pt.
+[2026-04-23 16:33:48,018] WARNING - Skipping comparison checkpoint 'transformer' because it was not found at /root/2026.4.15Manuscript-DIODEM/project/configs/outputs/supervised_transformer_anomaly_test_only/seed_runs/seed_0043/training/checkpoints/best.pt.
+[2026-04-23 16:37:56,977] INFO - Evaluation finished for 8675 windows. Compared 6 models.
+[2026-04-23 16:37:56,977] INFO - Saved per-motion delta table to /root/2026.4.15Manuscript-DIODEM/outputs/supervised_anomaly_test_only/seed_runs/seed_0043/evaluation/metrics/per_motion_delta_tcn_vs_lowpass.csv.
