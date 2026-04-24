@@ -1,0 +1,12 @@
+{
+  "checkpoint": "/root/2026.4.15Manuscript-DIODEM/outputs/supervised_tcn_causal_by_experiment/seed_runs/seed_0042/training/checkpoints/best.pt",
+  "model_name": "tcn_causal",
+  "num_windows": 256,
+  "receptive_field": 61,
+  "split": "test",
+  "streaming_latency_mean_ms": 1.1906202947720885,
+  "streaming_latency_p95_ms": 1.20937848163303,
+  "streaming_vs_offline_max_abs_diff_mean": 1.8361024558544159e-06,
+  "streaming_vs_offline_rmse_mean": 3.4155515171718775e-07,
+  "window_size": 64
+}
