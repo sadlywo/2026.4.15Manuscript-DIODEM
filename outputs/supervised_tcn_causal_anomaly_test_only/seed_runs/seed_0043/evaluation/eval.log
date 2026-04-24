@@ -1,0 +1,2 @@
+[2026-04-24 14:37:57,975] INFO - Evaluation finished for 8675 windows. Compared 9 models.
+[2026-04-24 14:37:57,976] INFO - Saved per-motion delta table to /root/2026.4.15Manuscript-DIODEM/outputs/supervised_tcn_causal_anomaly_test_only/seed_runs/seed_0043/evaluation/metrics/per_motion_delta_tcn_causal_vs_lowpass.csv.

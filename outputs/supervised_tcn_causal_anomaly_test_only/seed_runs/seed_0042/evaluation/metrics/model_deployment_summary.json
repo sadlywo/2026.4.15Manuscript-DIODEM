@@ -1,0 +1,94 @@
+{
+  "models": [
+    {
+      "architecture_name": "tcn_causal",
+      "cpu_forward_ms_per_window": 1.3043701276183128,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "tcn_causal",
+      "model_role": "trained",
+      "parameter_count": 101326,
+      "parameter_size_mb_fp32": 0.38652801513671875,
+      "trainable_parameter_count": 101326
+    },
+    {
+      "architecture_name": "tcn",
+      "cpu_forward_ms_per_window": 1.2955199368298054,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "tcn",
+      "model_role": "trained_comparison",
+      "parameter_count": 101326,
+      "parameter_size_mb_fp32": 0.38652801513671875,
+      "trainable_parameter_count": 101326
+    },
+    {
+      "architecture_name": "gru",
+      "cpu_forward_ms_per_window": 2.6677079498767853,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "gru",
+      "model_role": "trained_comparison",
+      "parameter_count": 152070,
+      "parameter_size_mb_fp32": 0.5801010131835938,
+      "trainable_parameter_count": 152070
+    },
+    {
+      "architecture_name": "transformer",
+      "cpu_forward_ms_per_window": 1.3936521671712399,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "transformer",
+      "model_role": "trained_comparison",
+      "parameter_count": 399110,
+      "parameter_size_mb_fp32": 1.5224838256835938,
+      "trainable_parameter_count": 399110
+    },
+    {
+      "architecture_name": "identity",
+      "cpu_forward_ms_per_window": 0.0013408064842224121,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "identity",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "lowpass",
+      "cpu_forward_ms_per_window": 0.030010025948286057,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "lowpass",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "butterworth",
+      "cpu_forward_ms_per_window": 2.0511293783783913,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "butterworth",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "savgol",
+      "cpu_forward_ms_per_window": 2.0939008705317974,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "savgol",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "wiener",
+      "cpu_forward_ms_per_window": 0.43312815949320793,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "wiener",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    }
+  ]
+}
