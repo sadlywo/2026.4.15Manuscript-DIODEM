@@ -1,0 +1,7 @@
+﻿| Model | Params | FP32 MB | CPU ms/window | Streaming mean ms/step | Streaming p95 ms/step | Streaming vs offline | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| tcn_causal | 101,326 | 0.387 | 1.301 +- 0.002 | 1.191 | 1.209 | RMSE=0.0000003; max abs=0.0000018 | possible_on_embedded_linux |
+| transformer | 399,110 | 1.522 | 1.319 +- 0.016 |  |  |  | possible_on_embedded_linux |
+| gru | 152,070 | 0.580 | 2.699 +- 0.051 |  |  |  | possible_on_embedded_linux |
+| tcn | 101,326 | 0.387 | 1.336 +- 0.012 |  |  |  | possible_on_embedded_linux |
+| lowpass | 0 | 0.000 | 0.030 +- 0.000 |  |  |  | yes_classical_filter |

@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1180" viewBox="0 0 1800 1180">
+  <defs>
+    <style>
+      .title { font: 700 34px Arial, Helvetica, sans-serif; fill: #18324a; }
+      .section { font: 700 20px Arial, Helvetica, sans-serif; fill: #18324a; }
+      .label { font: 600 17px Arial, Helvetica, sans-serif; fill: #18324a; }
+      .body { font: 15px Arial, Helvetica, sans-serif; fill: #2d4358; }
+      .small { font: 13px Arial, Helvetica, sans-serif; fill: #4e6475; }
+      .panel { fill: #f7fafc; stroke: #c7d4de; stroke-width: 2; rx: 22; ry: 22; }
+      .box-blue { fill: #eaf4ff; stroke: #5a9bd5; stroke-width: 2; rx: 18; ry: 18; }
+      .box-cyan { fill: #ebfbfb; stroke: #42a7a0; stroke-width: 2; rx: 18; ry: 18; }
+      .box-green { fill: #eef9f1; stroke: #5f9b67; stroke-width: 2; rx: 18; ry: 18; }
+      .box-orange { fill: #fff5ea; stroke: #d78a38; stroke-width: 2; rx: 18; ry: 18; }
+      .box-red { fill: #fff1f0; stroke: #d05d57; stroke-width: 2; rx: 18; ry: 18; }
+      .box-gray { fill: #f4f7f9; stroke: #8ca2b2; stroke-width: 2; rx: 18; ry: 18; }
+      .arrow { stroke: #49657b; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .arrow-thin { stroke: #678399; stroke-width: 2.2; fill: none; marker-end: url(#arrowheadSmall); }
+      .arrow-dashed { stroke: #2f8a63; stroke-width: 3; fill: none; stroke-dasharray: 10 7; marker-end: url(#arrowheadGreen); }
+      .divider { stroke: #d7e0e7; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#49657b" />
+    </marker>
+    <marker id="arrowheadSmall" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#678399" />
+    </marker>
+    <marker id="arrowheadGreen" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#2f8a63" />
+    </marker>
+  </defs>
+
+  <rect x="18" y="18" width="1764" height="1144" fill="#ffffff" stroke="#d8e1e8" stroke-width="2"/>
+  <text x="60" y="72" class="title">Framework of the Proposed IMU Motion Artifact Compensation Study</text>
+
+  <rect x="1390" y="38" width="320" height="72" class="box-gray"/>
+  <line x1="1422" y1="66" x2="1492" y2="66" class="arrow-thin"/>
+  <text x="1506" y="71" class="small">offline training / evaluation</text>
+  <line x1="1422" y1="89" x2="1492" y2="89" class="arrow-dashed"/>
+  <text x="1506" y="94" class="small">streaming deployment path</text>
+
+  <rect x="50" y="120" width="1700" height="220" class="panel"/>
+  <text x="74" y="154" class="section">A. Paired Data Construction and Problem Formulation</text>
+
+  <rect x="82" y="186" width="235" height="112" class="box-blue"/>
+  <text x="102" y="218" class="label">Rigid IMU recordings</text>
+  <text x="102" y="246" class="body">Reference sensor windows</text>
+  <text x="102" y="270" class="body">acc/gyr, 40 Hz, segment-wise</text>
+
+  <rect x="82" y="312" width="235" height="112" class="box-red"/>
+  <text x="102" y="344" class="label">Nonrigid IMU recordings</text>
+  <text x="102" y="372" class="body">Artifact-corrupted input windows</text>
+  <text x="102" y="396" class="body">soft-tissue / attachment distortion</text>
+
+  <rect x="378" y="220" width="255" height="128" class="box-cyan"/>
+  <text x="398" y="254" class="label">Segment-level pairing</text>
+  <text x="398" y="282" class="body">rigid and nonrigid signals are</text>
+  <text x="398" y="304" class="body">matched by experiment, motion,</text>
+  <text x="398" y="326" class="body">segment, and timestamp</text>
+
+  <rect x="690" y="220" width="300" height="128" class="box-cyan"/>
+  <text x="710" y="254" class="label">Sliding windows and normalization</text>
+  <text x="710" y="282" class="body">Input: nonrigid window [T x 6]</text>
+  <text x="710" y="304" class="body">Target: rigid window [T x 6]</text>
+  <text x="710" y="326" class="body">per-channel z-score statistics</text>
+
+  <rect x="1052" y="186" width="302" height="162" class="box-orange"/>
+  <text x="1072" y="220" class="label">Evaluation protocols</text>
+  <text x="1072" y="252" class="body">1. by_experiment</text>
+  <text x="1072" y="276" class="body">2. by_motion_type</text>
+  <text x="1072" y="300" class="body">3. anomaly_test_only</text>
+  <text x="1072" y="330" class="body">Purpose: in-distribution, cross-motion,</text>
+  <text x="1072" y="352" class="body">and anomaly-focused robustness</text>
+
+  <rect x="1412" y="220" width="298" height="128" class="box-green"/>
+  <text x="1432" y="254" class="label">Supervised objective</text>
+  <text x="1432" y="282" class="body">Learn a mapping:</text>
+  <text x="1432" y="306" class="body">nonrigid IMU -&gt; rigid-reference IMU</text>
+  <text x="1432" y="330" class="body">artifact compensation, not just smoothing</text>
+
+  <path d="M318 242 C342 242, 344 242, 377 242" class="arrow"/>
+  <path d="M318 368 C342 368, 344 282, 377 282" class="arrow"/>
+  <path d="M634 284 C656 284, 662 284, 689 284" class="arrow"/>
+  <path d="M991 284 C1014 284, 1022 284, 1051 284" class="arrow"/>
+  <path d="M1355 284 C1378 284, 1386 284, 1411 284" class="arrow"/>
+
+  <rect x="50" y="368" width="1700" height="450" class="panel"/>
+  <text x="74" y="402" class="section">B. Attachment-Aware Causal TCN Compensation Model</text>
+
+  <rect x="86" y="462" width="236" height="120" class="box-red"/>
+  <text x="106" y="496" class="label">Input stream / input window</text>
+  <text x="106" y="524" class="body">nonrigid acc_x/y/z</text>
+  <text x="106" y="546" class="body">nonrigid gyr_x/y/z</text>
+  <text x="106" y="568" class="body">shape: [B, T, 6] or step-wise [B, 6]</text>
+
+  <rect x="374" y="478" width="180" height="88" class="box-blue"/>
+  <text x="404" y="512" class="label">1x1 input projection</text>
+  <text x="420" y="540" class="body">6 -&gt; hidden_dim</text>
+
+  <rect x="620" y="442" width="478" height="162" class="box-green"/>
+  <text x="646" y="478" class="label">Dilated residual temporal backbone</text>
+  <text x="646" y="504" class="body">stacked causal temporal blocks with exponentially increasing dilation</text>
+  <rect x="648" y="528" width="90" height="48" class="box-cyan"/>
+  <text x="668" y="558" class="body">Block 1</text>
+  <text x="670" y="574" class="small">d = 1</text>
+  <rect x="756" y="528" width="90" height="48" class="box-cyan"/>
+  <text x="776" y="558" class="body">Block 2</text>
+  <text x="778" y="574" class="small">d = 2</text>
+  <rect x="864" y="528" width="90" height="48" class="box-cyan"/>
+  <text x="884" y="558" class="body">Block 3</text>
+  <text x="886" y="574" class="small">d = 4</text>
+  <rect x="972" y="528" width="90" height="48" class="box-cyan"/>
+  <text x="992" y="558" class="body">Block 4</text>
+  <text x="994" y="574" class="small">d = 8</text>
+  <line x1="738" y1="552" x2="756" y2="552" class="arrow-thin"/>
+  <line x1="846" y1="552" x2="864" y2="552" class="arrow-thin"/>
+  <line x1="954" y1="552" x2="972" y2="552" class="arrow-thin"/>
+
+  <rect x="1164" y="430" width="268" height="124" class="box-orange"/>
+  <text x="1188" y="464" class="label">Attachment state encoder</text>
+  <text x="1188" y="492" class="body">latent attachment representation</text>
+  <text x="1188" y="514" class="body">z_attach, z_attach_sequence</text>
+  <text x="1188" y="536" class="body">summarizes coupling condition</text>
+
+  <rect x="1164" y="580" width="268" height="94" class="box-orange"/>
+  <text x="1188" y="614" class="label">Feature modulation</text>
+  <text x="1188" y="642" class="body">gate + shift over temporal features</text>
+
+  <rect x="1486" y="474" width="190" height="92" class="box-blue"/>
+  <text x="1510" y="508" class="label">Residual projection</text>
+  <text x="1518" y="536" class="body">hidden -&gt; 6 channels</text>
+
+  <circle cx="1608" cy="640" r="26" fill="#eef9f1" stroke="#5f9b67" stroke-width="2"/>
+  <text x="1599" y="646" class="label">+</text>
+  <text x="1516" y="682" class="small">residual learning</text>
+
+  <rect x="1484" y="712" width="214" height="86" class="box-green"/>
+  <text x="1506" y="746" class="label">Compensated rigid-like IMU</text>
+  <text x="1506" y="772" class="body">predicted clean window / stream</text>
+
+  <path d="M323 522 C344 522, 352 522, 373 522" class="arrow"/>
+  <path d="M555 522 C580 522, 590 522, 619 522" class="arrow"/>
+  <path d="M1099 522 C1124 522, 1132 494, 1163 494" class="arrow"/>
+  <path d="M1099 552 C1126 552, 1133 627, 1163 627" class="arrow"/>
+  <path d="M1433 627 C1454 627, 1462 627, 1485 627" class="arrow"/>
+  <path d="M1677 520 C1710 520, 1710 609, 1635 635" class="arrow"/>
+  <path d="M323 574 C822 760, 1512 692, 1582 664" class="arrow-thin"/>
+
+  <rect x="84" y="644" width="1298" height="132" class="box-gray"/>
+  <text x="108" y="680" class="label">Composite supervision during training</text>
+  <text x="108" y="708" class="body">L_time (L1 + MSE)  +  L_derivative  +  L_spectral  +  L_attach_L2  +  L_attach_temporal</text>
+  <text x="108" y="736" class="body">These losses enforce waveform fidelity, temporal consistency, spectral alignment, and stable attachment-state encoding.</text>
+
+  <rect x="1430" y="612" width="176" height="56" fill="#fff5ea" stroke="#d78a38" stroke-width="2" rx="18" ry="18"/>
+  <text x="1454" y="646" class="body">gate * features + shift</text>
+
+  <rect x="50" y="846" width="1700" height="278" class="panel"/>
+  <text x="74" y="880" class="section">C. Evaluation, Comparison, and Online Deployment Path</text>
+
+  <rect x="88" y="930" width="308" height="128" class="box-blue"/>
+  <text x="112" y="964" class="label">Offline model comparison</text>
+  <text x="112" y="992" class="body">Deployment model: causal TCN</text>
+  <text x="112" y="1014" class="body">Accuracy upper bound: Transformer</text>
+  <text x="112" y="1036" class="body">Other comparisons: GRU + classical filters</text>
+
+  <rect x="444" y="930" width="350" height="128" class="box-orange"/>
+  <text x="468" y="964" class="label">Signal-level evaluation metrics</text>
+  <text x="468" y="992" class="body">RMSE, acc/gyr channel RMSE, Pearson</text>
+  <text x="468" y="1014" class="body">PSD distance, high-frequency ratio improvement</text>
+  <text x="468" y="1036" class="body">multi-seed summary + motion-level statistics</text>
+
+  <rect x="846" y="930" width="376" height="128" class="box-green"/>
+  <text x="870" y="964" class="label">Generalization and robustness tests</text>
+  <text x="870" y="992" class="body">by_experiment: standard split</text>
+  <text x="870" y="1014" class="body">by_motion_type: unseen motion classes</text>
+  <text x="870" y="1036" class="body">anomaly_test_only: held-out anomaly cases</text>
+
+  <rect x="1276" y="930" width="426" height="128" class="box-cyan"/>
+  <text x="1300" y="964" class="label">Streaming deployment path</text>
+  <text x="1300" y="992" class="body">forward_step with cached causal states</text>
+  <text x="1300" y="1014" class="body">streaming prediction ~= offline causal prediction</text>
+  <text x="1300" y="1036" class="body">edge target: Raspberry Pi / Jetson real-time compensation</text>
+
+  <path d="M1590 799 C1590 848, 1590 860, 1590 929" class="arrow-dashed"/>
+  <path d="M1590 799 C1424 884, 1424 884, 1424 929" class="arrow"/>
+  <path d="M1590 799 C1034 884, 1034 884, 1034 929" class="arrow"/>
+  <path d="M1590 799 C726 884, 726 884, 726 929" class="arrow"/>
+  <path d="M1590 799 C278 884, 278 884, 278 929" class="arrow"/>
+
+  <text x="72" y="1110" class="small">Suggested caption: The proposed framework pairs rigid and nonrigid IMU measurements, trains an attachment-aware residual temporal compensator,</text>
+  <text x="72" y="1130" class="small">evaluates generalization across experiments, motion types, and anomaly cases, and extends the model to causal streaming inference for edge deployment.</text>
+</svg>
