@@ -1,0 +1,7 @@
+| Model | By-experiment RMSE | Parameters | Model Size (FP32 MB) | CPU Inference per Window | Streaming Mean per Step | Streaming p95 per Step | Deployment Message |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Transformer | `0.3472 +- 0.0026` | `399,110` | `1.522` | `1.319 +- 0.016` |  |  | Best offline accuracy, but model is 4x larger than TCN-causal |
+| TCN-causal | `0.3870 +- 0.0013` | `101,326` | `0.387` | `1.301 +- 0.002` | `1.191` | `1.209` | Best deployment-oriented model; streaming output matches offline causal forward |
+| TCN | `0.3908 +- 0.0059` | `101,326` | `0.387` | `1.336 +- 0.012` |  |  | Nearly same size as TCN-causal, but no explicit streaming path |
+| GRU | `0.4020 +- 0.0020` | `152,070` | `0.580` | `2.699 +- 0.051` |  |  | No clear advantage in either accuracy or latency |
+| Lowpass | `0.5575 +- 0.0000` | `0` | `0.000` | `0.030 +- 0.000` |  |  | Fastest baseline, but substantially worse compensation accuracy |

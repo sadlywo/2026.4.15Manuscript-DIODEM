@@ -1,0 +1,7 @@
+Variant,Change,RMSE (lower better),Delta RMSE vs full,PSD Dist. (lower better),HF Improve. (higher better)
+Full model,Composite loss + attachment latent + attachment regularization,0.1155,0.00%,0.00655,5.754
+w/o derivative loss,Remove derivative consistency term,0.1168,+1.11%,0.00668,5.682
+w/o spectral loss,Remove spectral consistency term,0.1149,-0.45%,0.00680,5.604
+w/o attachment regularization,Keep latent but remove attach_l2 and attach_temporal,0.1152,-0.22%,0.00641,5.704
+w/o attachment latent,Disable attachment latent branch,0.1169,+1.25%,0.00696,5.687
+MSE only,Use only MSE reconstruction objective,0.1247,+8.03%,0.00791,5.456

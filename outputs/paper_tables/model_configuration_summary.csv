@@ -1,0 +1,46 @@
+Category,Item,Value,Explanation
+Naming,Model name,TCN-causal,Current deployment-oriented main model
+Naming,Causal meaning,Uses only current and past samples,No future-time samples are used during inference so streaming / online deployment is possible
+Data,Dataset,DIODEM paired rigid/nonrigid IMU,Supervised compensation from nonrigid IMU to rigid-reference IMU
+Data,Sampling frequency,40 Hz,Parsed from DIODEM CSV headers and enforced during dataset building
+Data,Window size,64 samples,Equivalent to 1.6 s context at 40 Hz
+Data,Stride,16 samples,Equivalent to 0.4 s hop between adjacent windows
+Data,Input channels,"acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z",6-channel nonrigid IMU input
+Data,Target channels,"acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z",6-channel rigid-reference IMU target
+Data,Normalization,Per-channel z-score,Applied before model training and evaluation
+Input/Output,Input tensor shape,"[B, T, 6]",B=batch size; T=64 time steps
+Input/Output,Output tensor shape,"[B, T, 6]",Predicted rigid-reference IMU window
+Input/Output,Prediction form,"X_hat = X_nr + Delta X",Residual compensation instead of direct replacement
+Architecture,Backbone type,Attachment-aware residual TCN,Temporal convolutional network with residual blocks and attachment-state modulation
+Architecture,Hidden dimension,64,Channel width inside the temporal backbone
+Architecture,Number of temporal blocks,4,Dilated residual Conv1D blocks
+Architecture,Kernel size,3,Used in each causal temporal convolution
+Architecture,Dilation schedule,"1, 2, 4, 8",Expands temporal receptive field across layers
+Architecture,Dropout,0.1,Applied inside temporal blocks
+Architecture,Attachment latent dimension,8,Latent representation of attachment / coupling state
+Architecture,Attachment modulation,Feature-wise gate + shift,FiLM-like modulation of temporal features using latent attachment state
+Architecture,Residual head,1x1 Conv projection,Maps hidden features to residual correction Delta X
+Architecture,Base skip connection,Identity skip from input,Original signal is added to predicted residual
+Architecture,Receptive field,61 samples,Effective causal temporal history used by the model
+Streaming,Streaming mode,Supported,forward_step and forward_stream are implemented
+Streaming,Streaming consistency,"RMSE ~ 3.4e-7; max abs ~ 1.8e-6",Streaming output is numerically almost identical to offline causal forward
+Streaming,Streaming latency,1.191 ms mean / 1.209 ms p95,Measured for the by-experiment causal checkpoint
+Deployment,Parameter count,"101,326",From deployment summary of the trained TCN-causal model
+Deployment,Model size,0.387 MB FP32,Lightweight enough for embedded Linux class devices
+Deployment,CPU inference time,1.301 +- 0.002 ms per window,Measured in current evaluation pipeline
+Training,Batch size,64,Mini-batch size during supervised training
+Training,Epochs,50,Maximum training epochs
+Training,Learning rate,0.001,Optimizer learning rate
+Training,Weight decay,0.0001,L2 regularization for optimizer
+Training,Early stopping patience,8,Stops training when validation does not improve
+Loss,Total loss,"L_total = 1.0*L1 + 0.5*MSE + 0.3*L_der + 0.2*L_spec + 0.001*L_attach_l2 + 0.001*L_attach_temp",Weighted composite objective
+Loss,Time-domain L1,1.0,Promotes robust waveform reconstruction
+Loss,Time-domain MSE,0.5,Penalizes larger amplitude reconstruction errors
+Loss,Derivative loss,0.3,Matches temporal first-order differences between prediction and target
+Loss,Spectral loss,0.2,Matches FFT magnitude spectra between prediction and target
+Loss,Smoothness regularization,0.0,Configured but not used in the current main model
+Loss,Attachment L2 regularization,0.001,Constrains latent attachment state magnitude
+Loss,Attachment temporal consistency,0.001,Penalizes abrupt temporal changes in the attachment latent sequence
+Evaluation,Primary split,by_experiment,Standard in-distribution evaluation setting
+Evaluation,Hardest split,by_motion_type,Tests generalization to unseen motion categories
+Evaluation,Anomaly setting,anomaly test-only,Assesses robustness to anomaly-focused test cases
