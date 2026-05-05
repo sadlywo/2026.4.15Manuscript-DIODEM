@@ -1,0 +1,7 @@
+motion_name,kc_type,experiment_id,motion_folder,motion_index,segment_id,sampling_frequency_hz,window_start_s,window_end_s,selection_score,csv_file
+canonical,arm,exp01,motion01_canonical,motion01,seg3,40.0,42.925,48.925,3.199212,canonical_origin_export.csv
+freeze1,arm,exp01,motion08_freeze1,motion08,seg3,40.0,0.000,2.000,10.057300,freeze1_origin_export.csv
+slow1,arm,exp01,motion03_slow1,motion03,seg2,40.0,34.000,40.000,3.830962,slow1_origin_export.csv
+fast_slow_fast,arm,exp01,motion07_fast_slow_fast,motion07,seg2,40.0,1.100,7.100,2.168624,fast_slow_fast_origin_export.csv
+dangle2,gait,exp08,motion04_dangle2,motion04,seg4,40.0,31.025,37.025,1.543218,dangle2_origin_export.csv
+shaking,gait,exp11,motion04_shaking,motion04,seg5,40.0,25.175,31.175,6.019487,shaking_origin_export.csv

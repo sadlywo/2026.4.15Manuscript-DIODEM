@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import time
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Iterable
 
 import numpy as np
 
@@ -14,6 +14,34 @@ from project.utils.torch_compat import TORCH_AVAILABLE, require_torch, torch
 def _load_json(path: Path) -> Dict[str, Any]:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def _candidate_processed_roots(checkpoint_path: Path, config: Dict[str, Any]) -> Iterable[Path]:
+    processed_root_text = str(config.get("processed_root", ""))
+    repo_root_text = str(config.get("repo_root", ""))
+    path = Path(processed_root_text)
+
+    candidates = []
+    if path.is_absolute():
+        candidates.append(path)
+    elif repo_root_text:
+        candidates.append((Path(repo_root_text) / path).resolve())
+
+    # Fallback to the current repository root inferred from this source file.
+    local_repo_root = Path(__file__).resolve().parents[2]
+    candidates.append((local_repo_root / path).resolve())
+
+    # Final fallback: infer repo root relative to the checkpoint location.
+    checkpoint_repo_root = checkpoint_path.resolve().parents[4]
+    candidates.append((checkpoint_repo_root / path).resolve())
+
+    seen = set()
+    for candidate in candidates:
+        candidate_key = str(candidate)
+        if candidate_key in seen:
+            continue
+        seen.add(candidate_key)
+        yield candidate
 
 
 if TORCH_AVAILABLE:  # pragma: no branch
@@ -58,9 +86,19 @@ if TORCH_AVAILABLE:  # pragma: no branch
             model.load_state_dict(checkpoint["model_state_dict"])
             model.eval()
 
-            repo_root = Path(config["repo_root"])
-            processed_root = (repo_root / config["processed_root"]).resolve()
-            stats = _load_json(processed_root / "normalization_stats.json")
+            processed_root = None
+            stats = None
+            for candidate in _candidate_processed_roots(checkpoint_path, config):
+                stats_path = candidate / "normalization_stats.json"
+                if stats_path.exists():
+                    processed_root = candidate
+                    stats = _load_json(stats_path)
+                    break
+            if stats is None or processed_root is None:
+                raise FileNotFoundError(
+                    "Could not locate normalization_stats.json for streaming inference. "
+                    f"Tried processed_root='{config.get('processed_root')}' relative to the checkpoint and local repo."
+                )
             return cls(
                 model=model,
                 normalization=str(config.get("normalization", "none")),

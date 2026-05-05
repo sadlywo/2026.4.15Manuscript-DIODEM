@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "Experiment": "Replay demo: exp01 canonical seg1",
+      "Samples": 5680,
+      "Sampling Hz": "40.0",
+      "Input RMSE": "0.4710",
+      "Compensated RMSE": "0.1897",
+      "RMSE Reduction (%)": "59.73",
+      "Acc RMSE": "0.3185",
+      "Acc Reduction (%)": "58.75",
+      "Gyr RMSE": "0.0609",
+      "Gyr Reduction (%)": "64.22",
+      "Pearson": "0.9944",
+      "PSD Distance": "4.5621",
+      "HF Improve.": "0.9900",
+      "Latency mean (ms)": "1.634",
+      "Latency p95 (ms)": "2.105"
+    }
+  ]
+}

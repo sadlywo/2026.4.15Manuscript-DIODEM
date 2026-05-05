@@ -1,0 +1,3 @@
+| Experiment | Samples | Sampling Hz | Input RMSE | Compensated RMSE | RMSE Reduction (%) | Acc RMSE | Acc Reduction (%) | Gyr RMSE | Gyr Reduction (%) | Pearson | PSD Distance | HF Improve. | Latency mean (ms) | Latency p95 (ms) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Replay demo: exp01 canonical seg1 | 5680 | 40.0 | 0.4710 | 0.1897 | 59.73 | 0.3185 | 58.75 | 0.0609 | 64.22 | 0.9944 | 4.5621 | 0.9900 | 1.634 | 2.105 |
