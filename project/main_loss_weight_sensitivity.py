@@ -266,6 +266,15 @@ def _read_single_row_csv(path: Path, key: str, value: str) -> Dict[str, str]:
     raise ValueError(f"Could not find row with {key}={value} in {path}")
 
 
+def _get_metric_value(row: Dict[str, str], metric_name: str) -> float:
+    candidates = [metric_name, f"{metric_name}_mean"]
+    for candidate in candidates:
+        if candidate in row and str(row[candidate]).strip() != "":
+            return float(row[candidate])
+    available = ", ".join(sorted(row.keys()))
+    raise KeyError(f"Could not find metric '{metric_name}' or '{metric_name}_mean' in row. Available columns: {available}")
+
+
 def _format_result_rows(summary_rows: List[Dict[str, str]]) -> List[Dict[str, str]]:
     baseline = next(row for row in summary_rows if row["Variant"] == "baseline")
     baseline_rmse = float(baseline["RMSE"])
@@ -387,12 +396,12 @@ def _run_sweep(
                 "spectral": _format_weight(weights.get("spectral", 0.0)),
                 "attach_l2": _format_weight(weights.get("attach_l2", 0.0)),
                 "attach_temporal": _format_weight(weights.get("attach_temporal", 0.0)),
-                "RMSE": f"{float(metrics_row['rmse_mean']):.4f}",
-                "Pearson": f"{float(metrics_row['pearson_mean']):.4f}",
-                "PSD Dist.": f"{float(metrics_row['psd_distance_mean']):.5f}",
-                "HF Improve.": f"{float(metrics_row['hf_ratio_improvement_mean']):.3f}",
-                "Acc Norm RMSE": f"{float(metrics_row['acc_norm_rmse']):.4f}",
-                "Gyr Norm RMSE": f"{float(metrics_row['gyr_norm_rmse']):.4f}",
+                "RMSE": f"{_get_metric_value(metrics_row, 'rmse_mean'):.4f}",
+                "Pearson": f"{_get_metric_value(metrics_row, 'pearson_mean'):.4f}",
+                "PSD Dist.": f"{_get_metric_value(metrics_row, 'psd_distance_mean'):.5f}",
+                "HF Improve.": f"{_get_metric_value(metrics_row, 'hf_ratio_improvement_mean'):.3f}",
+                "Acc Norm RMSE": f"{_get_metric_value(metrics_row, 'acc_norm_rmse'):.4f}",
+                "Gyr Norm RMSE": f"{_get_metric_value(metrics_row, 'gyr_norm_rmse'):.4f}",
             }
         )
 
