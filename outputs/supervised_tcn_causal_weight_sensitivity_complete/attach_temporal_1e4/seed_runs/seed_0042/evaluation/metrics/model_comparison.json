@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "acc_channel_rmse_improvement": 0.857469890017959,
+      "acc_channel_rmse_mean": 0.6325769856149048,
+      "acc_norm_rmse": 0.51575409814784,
+      "gyr_channel_rmse_improvement": 0.2541403886179987,
+      "gyr_channel_rmse_mean": 0.13963923241636994,
+      "gyr_norm_rmse": 0.1770520251130278,
+      "hf_ratio_improvement_mean": 8.35139370940859,
+      "input_acc_channel_rmse_mean": 1.490046875632864,
+      "input_acc_norm_rmse": 1.2493681899278055,
+      "input_gyr_channel_rmse_mean": 0.3937796210343687,
+      "input_gyr_norm_rmse": 0.6131447047228668,
+      "input_rmse_mean": 0.9419132483336161,
+      "model_name": "tcn_causal",
+      "model_role": "trained",
+      "num_windows": 8633,
+      "pearson_mean": 0.8518699756176096,
+      "psd_distance_mean": 0.053385774641092495,
+      "rmse_mean": 0.38610810901563736
+    }
+  ]
+}

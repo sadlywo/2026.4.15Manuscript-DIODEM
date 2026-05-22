@@ -1,6 +1,6 @@
 **Supplementary Table Sx. Recommended loss-weight sensitivity study design.**
 
-This table defines the `complete` sensitivity preset used to assess whether the composite-loss coefficients produce a robust empirical trade-off. Unless otherwise stated, all settings inherit the same model backbone, data split, and preprocessing pipeline; only the listed loss coefficients are changed. Recommended seeds: 42.
+This table defines the `complete` sensitivity preset used to assess whether the composite-loss coefficients produce a robust empirical trade-off. Unless otherwise stated, all settings inherit the same model backbone, data split, and preprocessing pipeline; only the listed loss coefficients are changed. Recommended seeds: 42, 43, 44.
 
 | Variant | Changed term | Purpose | time_l1 | mse | derivative | spectral | attach_l2 | attach_temporal |
 |---|---|---|---|---|---|---|---|---|

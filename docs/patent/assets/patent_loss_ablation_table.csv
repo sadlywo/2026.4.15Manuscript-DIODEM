@@ -1,0 +1,7 @@
+Variant,Deriv.,Spectral,Latent,Att-Reg,RMSE,PSD Dist.,HF Improve.
+Full model,Y,Y,Y,Y,0.1155,0.00655,5.754
+w/o derivative loss,N,Y,Y,Y,0.1168,0.00668,5.682
+w/o spectral loss,Y,N,Y,Y,0.1149,0.00680,5.604
+w/o attachment regularization,Y,Y,Y,N,0.1152,0.00641,5.704
+w/o attachment latent,Y,Y,N,N,0.1169,0.00696,5.687
+MSE only,N,N,Y,N,0.1247,0.00791,5.456

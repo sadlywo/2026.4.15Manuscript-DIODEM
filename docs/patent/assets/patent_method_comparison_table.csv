@@ -1,0 +1,7 @@
+Method,RMSE,Pearson,HF Improve.,Latency (ms/window),Remark
+Low-pass filter,0.5575,0.8398,7.982,0.030,Classical filter
+Butterworth,0.5716,0.7975,8.057,2.109,Classical filter
+GRU,0.4020,0.8401,8.294,2.699,Learned temporal model
+TCN,0.3908,0.8501,8.284,1.336,Residual TCN baseline
+Transformer,0.3472,0.8842,8.279,1.319,Best offline accuracy
+Proposed method,0.3870,0.8505,8.309,1.301,Causal and online deployable
