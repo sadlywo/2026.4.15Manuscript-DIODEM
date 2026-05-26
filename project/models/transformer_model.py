@@ -36,11 +36,15 @@ if TORCH_AVAILABLE:  # pragma: no branch
             num_heads: int = 4,
             feedforward_dim: int = 256,
             dropout: float = 0.1,
+            causal: bool = False,
+            stream_history: int = 4096,
         ):
             super().__init__()
             self.input_dim = int(input_dim)
             self.output_dim = int(output_dim)
             self.model_dim = int(model_dim)
+            self.causal = bool(causal)
+            self.stream_history = int(stream_history)
             self.input_projection = nn.Linear(self.input_dim, self.model_dim)
             self.position_encoding = SinusoidalPositionalEncoding(self.model_dim)
             encoder_layer = nn.TransformerEncoderLayer(
@@ -61,13 +65,49 @@ if TORCH_AVAILABLE:  # pragma: no branch
             if inputs.ndim != 3:
                 raise ValueError(f"Expected `[B, T, C]` input, got {tuple(inputs.shape)}")
             embedded = self.input_projection(inputs)
-            encoded = self.encoder(self.position_encoding(embedded))
+            attention_mask = self._causal_mask(inputs.shape[1], inputs.device) if self.causal else None
+            encoded = self.encoder(self.position_encoding(embedded), mask=attention_mask)
             residual = self.residual_head(encoded)
             base_signal = self.base_projection(inputs) if self.base_projection is not None else inputs
             predictions = base_signal + residual
             return {
                 "predictions": predictions,
                 "residual": residual,
+            }
+
+        def _causal_mask(self, sequence_length: int, device):
+            mask = torch.full((int(sequence_length), int(sequence_length)), float("-inf"), device=device)
+            return torch.triu(mask, diagonal=1)
+
+        def init_stream_state(self, batch_size: int = 1, device=None, dtype=torch.float32):
+            if not self.causal:
+                raise RuntimeError("Streaming inference is only available when TransformerBaseline is causal.")
+            device = device if device is not None else next(self.parameters()).device
+            return {
+                "history": torch.empty(int(batch_size), 0, self.input_dim, device=device, dtype=dtype),
+            }
+
+        def forward_step(self, input_step, stream_state=None):
+            if not self.causal:
+                raise RuntimeError("forward_step is only available when TransformerBaseline is causal.")
+            if input_step.ndim != 2:
+                raise ValueError(f"Expected `[B, C]` input step, got {tuple(input_step.shape)}")
+            if stream_state is None:
+                stream_state = self.init_stream_state(
+                    batch_size=input_step.shape[0],
+                    device=input_step.device,
+                    dtype=input_step.dtype,
+                )
+            history = torch.cat([stream_state["history"], input_step.unsqueeze(1)], dim=1)
+            if self.stream_history > 0 and history.shape[1] > self.stream_history:
+                history = history[:, -self.stream_history :, :]
+            outputs = self.forward(history)
+            prediction_step = outputs["predictions"][:, -1, :]
+            residual_step = outputs["residual"][:, -1, :]
+            return {
+                "prediction_step": prediction_step,
+                "residual_step": residual_step,
+                "stream_state": {"history": history.detach()},
             }
 
 else:

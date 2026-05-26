@@ -5,8 +5,8 @@ from project.utils.torch_compat import TORCH_AVAILABLE, nn, require_torch, torch
 
 if TORCH_AVAILABLE:  # pragma: no branch
 
-    class GRUBaseline(nn.Module):
-        """Sequence-to-sequence GRU residual baseline."""
+    class LSTMBaseline(nn.Module):
+        """Sequence-to-sequence LSTM residual baseline with causal step inference."""
 
         def __init__(
             self,
@@ -21,12 +21,12 @@ if TORCH_AVAILABLE:  # pragma: no branch
             self.output_dim = int(output_dim)
             self.hidden_dim = int(hidden_dim)
             self.num_layers = int(num_layers)
-            gru_dropout = float(dropout) if self.num_layers > 1 else 0.0
-            self.gru = nn.GRU(
+            lstm_dropout = float(dropout) if self.num_layers > 1 else 0.0
+            self.lstm = nn.LSTM(
                 input_size=self.input_dim,
                 hidden_size=self.hidden_dim,
                 num_layers=self.num_layers,
-                dropout=gru_dropout,
+                dropout=lstm_dropout,
                 batch_first=True,
             )
             self.residual_head = nn.Linear(self.hidden_dim, self.output_dim)
@@ -37,7 +37,7 @@ if TORCH_AVAILABLE:  # pragma: no branch
         def forward(self, inputs):
             if inputs.ndim != 3:
                 raise ValueError(f"Expected `[B, T, C]` input, got {tuple(inputs.shape)}")
-            sequence_features, _ = self.gru(inputs)
+            sequence_features, _ = self.lstm(inputs)
             residual = self.residual_head(sequence_features)
             base_signal = self.base_projection(inputs) if self.base_projection is not None else inputs
             predictions = base_signal + residual
@@ -55,7 +55,8 @@ if TORCH_AVAILABLE:  # pragma: no branch
                 device=device,
                 dtype=dtype,
             )
-            return {"hidden": hidden}
+            cell = torch.zeros_like(hidden)
+            return {"hidden": hidden, "cell": cell}
 
         def forward_step(self, input_step, stream_state=None):
             if input_step.ndim != 2:
@@ -66,18 +67,21 @@ if TORCH_AVAILABLE:  # pragma: no branch
                     device=input_step.device,
                     dtype=input_step.dtype,
                 )
-            sequence_features, hidden = self.gru(input_step.unsqueeze(1), stream_state["hidden"])
+            sequence_features, (hidden, cell) = self.lstm(
+                input_step.unsqueeze(1),
+                (stream_state["hidden"], stream_state["cell"]),
+            )
             residual_step = self.residual_head(sequence_features[:, -1, :])
             base_step = self.base_projection(input_step) if self.base_projection is not None else input_step
             prediction_step = base_step + residual_step
             return {
                 "prediction_step": prediction_step,
                 "residual_step": residual_step,
-                "stream_state": {"hidden": hidden.detach()},
+                "stream_state": {"hidden": hidden.detach(), "cell": cell.detach()},
             }
 
 else:
 
-    class GRUBaseline:  # pragma: no cover - runtime safeguard only
+    class LSTMBaseline:  # pragma: no cover - runtime safeguard only
         def __init__(self, *args, **kwargs):
             require_torch()
