@@ -6,6 +6,7 @@ import numpy as np
 from scipy.signal import butter, savgol_filter, sosfiltfilt, wiener
 
 from project.models.gru_model import GRUBaseline
+from project.models.lstm_model import LSTMBaseline
 from project.models.mlp_model import MLPBaseline
 from project.models.tcn_model import TCNBaseline
 from project.models.transformer_model import TransformerBaseline
@@ -184,8 +185,13 @@ AVAILABLE_MODELS = {
     "wiener": WienerBaseline,
     "linear": LinearProjectionBaseline,
     "mlp": MLPBaseline,
+    "mlp_causal": MLPBaseline,
     "gru": GRUBaseline,
+    "gru_causal": GRUBaseline,
+    "lstm": LSTMBaseline,
+    "lstm_causal": LSTMBaseline,
     "transformer": TransformerBaseline,
+    "transformer_causal": TransformerBaseline,
     "tcn": TCNBaseline,
     "tcn_causal": TCNBaseline,
 }
@@ -216,14 +222,14 @@ def build_model(model_name: str, input_dim: int, output_dim: int, model_config: 
         return WienerBaseline(window_size=int(model_config.get("wiener_window_size", 7)))
     if name == "linear":
         return LinearProjectionBaseline(input_dim=input_dim, output_dim=output_dim)
-    if name == "mlp":
+    if name in {"mlp", "mlp_causal"}:
         return MLPBaseline(
             input_dim=input_dim,
             output_dim=output_dim,
             hidden_dim=int(model_config.get("mlp_hidden_dim", 128)),
             dropout=float(model_config.get("dropout", 0.1)),
         )
-    if name == "gru":
+    if name in {"gru", "gru_causal"}:
         return GRUBaseline(
             input_dim=input_dim,
             output_dim=output_dim,
@@ -231,7 +237,15 @@ def build_model(model_name: str, input_dim: int, output_dim: int, model_config: 
             num_layers=int(model_config.get("gru_num_layers", 2)),
             dropout=float(model_config.get("dropout", 0.1)),
         )
-    if name == "transformer":
+    if name in {"lstm", "lstm_causal"}:
+        return LSTMBaseline(
+            input_dim=input_dim,
+            output_dim=output_dim,
+            hidden_dim=int(model_config.get("lstm_hidden_dim", model_config.get("gru_hidden_dim", 128))),
+            num_layers=int(model_config.get("lstm_num_layers", model_config.get("gru_num_layers", 2))),
+            dropout=float(model_config.get("dropout", 0.1)),
+        )
+    if name in {"transformer", "transformer_causal"}:
         return TransformerBaseline(
             input_dim=input_dim,
             output_dim=output_dim,
@@ -240,6 +254,8 @@ def build_model(model_name: str, input_dim: int, output_dim: int, model_config: 
             num_heads=int(model_config.get("transformer_num_heads", 4)),
             feedforward_dim=int(model_config.get("transformer_ff_dim", 256)),
             dropout=float(model_config.get("dropout", 0.1)),
+            causal=bool(model_config.get("causal", name == "transformer_causal")),
+            stream_history=int(model_config.get("stream_history", 4096)),
         )
     return TCNBaseline(
         input_dim=input_dim,

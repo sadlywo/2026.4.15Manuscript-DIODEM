@@ -25,9 +25,21 @@ if TORCH_AVAILABLE:  # pragma: no branch
                 raise ValueError(f"Expected `[B, T, C]` input, got {tuple(inputs.shape)}")
             return self.network(inputs)
 
+        def init_stream_state(self, batch_size: int = 1, device=None, dtype=None):
+            return {}
+
+        def forward_step(self, input_step, stream_state=None):
+            if input_step.ndim != 2:
+                raise ValueError(f"Expected `[B, C]` input step, got {tuple(input_step.shape)}")
+            prediction_step = self.network(input_step)
+            return {
+                "prediction_step": prediction_step,
+                "residual_step": prediction_step - input_step if prediction_step.shape == input_step.shape else prediction_step,
+                "stream_state": {} if stream_state is None else stream_state,
+            }
+
 else:
 
     class MLPBaseline:  # pragma: no cover - runtime safeguard only
         def __init__(self, *args, **kwargs):
             require_torch()
-
