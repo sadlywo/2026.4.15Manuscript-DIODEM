@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "acc_channel_rmse_improvement": 0.8052719866884845,
+      "acc_channel_rmse_mean": 0.7123204636392001,
+      "acc_norm_rmse": 0.5550025789244288,
+      "gyr_channel_rmse_improvement": 0.2389622514674397,
+      "gyr_channel_rmse_mean": 0.16661720468916758,
+      "gyr_norm_rmse": 0.2087049788153148,
+      "hf_ratio_improvement_mean": 8.125117009773199,
+      "input_acc_channel_rmse_mean": 1.5175924503276845,
+      "input_acc_norm_rmse": 1.2639799455173248,
+      "input_gyr_channel_rmse_mean": 0.40557945615660734,
+      "input_gyr_norm_rmse": 0.6296109158252916,
+      "input_rmse_mean": 0.961585953242146,
+      "model_name": "transformer_causal",
+      "model_role": "trained",
+      "num_windows": 8675,
+      "pearson_mean": 0.8417830624465619,
+      "psd_distance_mean": 0.07217943517574858,
+      "rmse_mean": 0.4394688341641838
+    }
+  ]
+}

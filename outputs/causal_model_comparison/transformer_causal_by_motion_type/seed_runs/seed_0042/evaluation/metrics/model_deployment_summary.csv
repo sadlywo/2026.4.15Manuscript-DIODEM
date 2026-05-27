@@ -1,0 +1,2 @@
+model_name,model_role,architecture_name,parameter_count,trainable_parameter_count,parameter_size_mb_fp32,cpu_forward_ms_per_window,embedded_deployment_verdict
+transformer_causal,trained,transformer_causal,399110,399110,1.5224838256835938,19.042247645556927,possible_on_embedded_linux
