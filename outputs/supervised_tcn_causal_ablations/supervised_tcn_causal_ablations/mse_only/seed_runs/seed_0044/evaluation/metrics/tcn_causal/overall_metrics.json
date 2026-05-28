@@ -1,0 +1,18 @@
+{
+  "acc_channel_rmse_improvement": 0.8280736017856657,
+  "acc_channel_rmse_mean": 0.6619732738471983,
+  "acc_norm_rmse": 0.5339063971466194,
+  "gyr_channel_rmse_improvement": 0.24445457542985144,
+  "gyr_channel_rmse_mean": 0.14932504560451718,
+  "gyr_norm_rmse": 0.18276127374556347,
+  "hf_ratio_improvement_mean": 8.13049204925276,
+  "input_acc_channel_rmse_mean": 1.4900468756328638,
+  "input_acc_norm_rmse": 1.2493681899278055,
+  "input_gyr_channel_rmse_mean": 0.39377962103436864,
+  "input_gyr_norm_rmse": 0.6131447047228668,
+  "input_rmse_mean": 0.9419132483336162,
+  "num_windows": 8633,
+  "pearson_mean": 0.8383665085164024,
+  "psd_distance_mean": 0.06444444071747155,
+  "rmse_mean": 0.40564915972585774
+}

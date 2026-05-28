@@ -17,16 +17,8 @@ from project.utils.torch_compat import require_torch
 DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
     {
         "name": "full_model",
-        "description": "Attachment latent code + composite loss.",
+        "description": "Attachment latent code + L1/MSE/spectral composite loss.",
         "overrides": {},
-    },
-    {
-        "name": "no_attachment_latent",
-        "description": "Disable attachment latent code and its regularization terms.",
-        "overrides": {
-            "model": {"attach_latent_dim": 0},
-            "loss_weights": {"attach_l2": 0.0, "attach_temporal": 0.0},
-        },
     },
     {
         "name": "mse_only",
@@ -35,18 +27,9 @@ DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
             "loss_weights": {
                 "time_l1": 0.0,
                 "mse": 1.0,
-                "derivative": 0.0,
                 "spectral": 0.0,
-                "smoothness": 0.0,
-                "attach_l2": 0.0,
-                "attach_temporal": 0.0,
             }
         },
-    },
-    {
-        "name": "no_derivative_loss",
-        "description": "Remove derivative consistency loss only.",
-        "overrides": {"loss_weights": {"derivative": 0.0}},
     },
     {
         "name": "no_spectral_loss",
@@ -54,11 +37,9 @@ DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
         "overrides": {"loss_weights": {"spectral": 0.0}},
     },
     {
-        "name": "no_attachment_regularization",
-        "description": "Keep attachment latent code but remove its explicit regularization terms.",
-        "overrides": {
-            "loss_weights": {"attach_l2": 0.0, "attach_temporal": 0.0},
-        },
+        "name": "no_attachment_latent",
+        "description": "Disable attachment latent code while retaining the final composite loss.",
+        "overrides": {"model": {"attach_latent_dim": 0}},
     },
 ]
 
@@ -67,11 +48,7 @@ _SUMMARY_CONFIG_COLUMNS = {
     "attach_latent_dim",
     "time_l1",
     "mse",
-    "derivative",
     "spectral",
-    "smoothness",
-    "attach_l2",
-    "attach_temporal",
 }
 
 
@@ -175,11 +152,7 @@ def _build_summary_row(config: Dict[str, Any], variant: Dict[str, Any], metrics:
         "attach_latent_dim": int(config.get("model", {}).get("attach_latent_dim", 0)),
         "time_l1": float(config["loss_weights"].get("time_l1", config["loss_weights"].get("l1", 0.0))),
         "mse": float(config["loss_weights"].get("mse", 0.0)),
-        "derivative": float(config["loss_weights"].get("derivative", 0.0)),
         "spectral": float(config["loss_weights"].get("spectral", 0.0)),
-        "smoothness": float(config["loss_weights"].get("smoothness", 0.0)),
-        "attach_l2": float(config["loss_weights"].get("attach_l2", 0.0)),
-        "attach_temporal": float(config["loss_weights"].get("attach_temporal", 0.0)),
         **metrics,
     }
     if seed is not None:
@@ -198,7 +171,8 @@ def run_ablation_suite(
     require_torch()
     repo_root = Path(base_config["repo_root"])
     base_outputs_root = Path(str(base_config["outputs_root"]))
-    ablation_root = ensure_dir((repo_root / base_outputs_root.parent / f"{base_outputs_root.name}_ablations").resolve())
+    ablation_root_name = base_outputs_root.name if base_outputs_root.name.endswith("_ablations") else f"{base_outputs_root.name}_ablations"
+    ablation_root = ensure_dir((repo_root / base_outputs_root.parent / ablation_root_name).resolve())
     processed_root = (repo_root / base_config["processed_root"]).resolve()
     build_processed_splits(base_config)
     resolved_seeds = resolve_experiment_seeds(base_config, explicit_seeds=seeds)
@@ -209,7 +183,8 @@ def run_ablation_suite(
         variant_name = str(variant["name"])
         variant_outputs_root = str((ablation_root / variant_name).relative_to(repo_root))
         variant_config = build_ablation_config(base_config, variant, outputs_root=variant_outputs_root)
-        save_json(variant_config, ablation_root / variant_name / "resolved_config.json")
+        variant_root = ensure_dir(ablation_root / variant_name)
+        save_json(variant_config, variant_root / "resolved_config.json")
 
         for seed in resolved_seeds:
             config = build_seed_run_config(variant_config, seed=seed, multi_seed=multi_seed)

@@ -76,18 +76,6 @@ def _build_variants(preset: str) -> List[Dict[str, Any]]:
             {"loss_weights": {"mse": 1.0}},
         ),
         _make_variant(
-            "derivative_0p1",
-            "Reduce derivative consistency to test weaker temporal dynamic preservation.",
-            "derivative",
-            {"loss_weights": {"derivative": 0.1}},
-        ),
-        _make_variant(
-            "derivative_0p5",
-            "Increase derivative consistency to test stronger temporal dynamic preservation.",
-            "derivative",
-            {"loss_weights": {"derivative": 0.5}},
-        ),
-        _make_variant(
             "spectral_0p1",
             "Reduce spectral consistency to test weaker frequency-domain alignment.",
             "spectral",
@@ -99,54 +87,12 @@ def _build_variants(preset: str) -> List[Dict[str, Any]]:
             "spectral",
             {"loss_weights": {"spectral": 0.4}},
         ),
-        _make_variant(
-            "attach_l2_0",
-            "Disable latent magnitude regularization.",
-            "attach_l2",
-            {"loss_weights": {"attach_l2": 0.0}},
-        ),
-        _make_variant(
-            "attach_l2_1e4",
-            "Weaken latent magnitude regularization by one order of magnitude.",
-            "attach_l2",
-            {"loss_weights": {"attach_l2": 1e-4}},
-        ),
-        _make_variant(
-            "attach_l2_1e2",
-            "Strengthen latent magnitude regularization by one order of magnitude.",
-            "attach_l2",
-            {"loss_weights": {"attach_l2": 1e-2}},
-        ),
-        _make_variant(
-            "attach_temporal_0",
-            "Disable latent temporal smoothness regularization.",
-            "attach_temporal",
-            {"loss_weights": {"attach_temporal": 0.0}},
-        ),
-        _make_variant(
-            "attach_temporal_1e4",
-            "Weaken latent temporal smoothness regularization by one order of magnitude.",
-            "attach_temporal",
-            {"loss_weights": {"attach_temporal": 1e-4}},
-        ),
-        _make_variant(
-            "attach_temporal_1e2",
-            "Strengthen latent temporal smoothness regularization by one order of magnitude.",
-            "attach_temporal",
-            {"loss_weights": {"attach_temporal": 1e-2}},
-        ),
     ]
     if preset == "fast":
         keep = {
             "baseline",
-            "derivative_0p1",
-            "derivative_0p5",
             "spectral_0p1",
             "spectral_0p4",
-            "attach_l2_0",
-            "attach_l2_1e2",
-            "attach_temporal_0",
-            "attach_temporal_1e2",
         }
         return [variant for variant in common if variant["name"] in keep]
     return common
@@ -216,10 +162,7 @@ def _plan_rows(base_config: Dict[str, Any], variants: List[Dict[str, Any]]) -> L
                 "Purpose": str(variant["purpose"]),
                 "time_l1": _format_weight(weights.get("time_l1", weights.get("l1", 0.0))),
                 "mse": _format_weight(weights.get("mse", 0.0)),
-                "derivative": _format_weight(weights.get("derivative", 0.0)),
                 "spectral": _format_weight(weights.get("spectral", 0.0)),
-                "attach_l2": _format_weight(weights.get("attach_l2", 0.0)),
-                "attach_temporal": _format_weight(weights.get("attach_temporal", 0.0)),
             }
         )
     return rows
@@ -251,9 +194,7 @@ def _write_plan_markdown(path: Path, rows: List[Dict[str, str]], preset: str, se
     lines.append("")
     lines.append("Suggested interpretation:")
     lines.append("- `time_l1` and `mse` probe the balance between absolute and quadratic reconstruction penalties.")
-    lines.append("- `derivative` tests the sensitivity of temporal dynamic preservation.")
     lines.append("- `spectral` tests the sensitivity of frequency-domain consistency.")
-    lines.append("- `attach_l2` and `attach_temporal` test whether the attachment latent is under- or over-regularized.")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -392,10 +333,7 @@ def _run_sweep(
                 "Changed term": str(variant["changed_term"]),
                 "time_l1": _format_weight(weights.get("time_l1", weights.get("l1", 0.0))),
                 "mse": _format_weight(weights.get("mse", 0.0)),
-                "derivative": _format_weight(weights.get("derivative", 0.0)),
                 "spectral": _format_weight(weights.get("spectral", 0.0)),
-                "attach_l2": _format_weight(weights.get("attach_l2", 0.0)),
-                "attach_temporal": _format_weight(weights.get("attach_temporal", 0.0)),
                 "RMSE": f"{_get_metric_value(metrics_row, 'rmse_mean'):.4f}",
                 "Pearson": f"{_get_metric_value(metrics_row, 'pearson_mean'):.4f}",
                 "PSD Dist.": f"{_get_metric_value(metrics_row, 'psd_distance_mean'):.5f}",

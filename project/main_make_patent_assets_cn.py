@@ -362,9 +362,7 @@ def _make_cn_ablation_table(ablation_csv: Path, output_dir: Path) -> None:
     raw_rows = _read_csv_rows(ablation_csv)
     variant_map = {
         "Full model": "完整模型",
-        "w/o derivative loss": "去掉导数损失",
         "w/o spectral loss": "去掉频谱损失",
-        "w/o attachment regularization": "去掉附着状态正则",
         "w/o attachment latent": "去掉附着隐状态",
         "MSE only": "仅保留MSE",
     }
@@ -373,10 +371,8 @@ def _make_cn_ablation_table(ablation_csv: Path, output_dir: Path) -> None:
         rows.append(
             {
                 "变体": variant_map.get(row["Variant"], row["Variant"]),
-                "导数项": "是" if row["Deriv."] == "Y" else "否",
                 "频谱项": "是" if row["Spectral"] == "Y" else "否",
                 "隐状态": "是" if row["Latent"] == "Y" else "否",
-                "附着正则": "是" if row["Att-Reg"] == "Y" else "否",
                 "RMSE": row["RMSE"],
                 "PSD距离": row["PSD Dist."],
                 "高频改善": row["HF Improve."],
@@ -387,7 +383,7 @@ def _make_cn_ablation_table(ablation_csv: Path, output_dir: Path) -> None:
     png_path = output_dir / "专利表2_损失函数消融.png"
     _write_csv(csv_path, rows)
     _write_markdown(md_path, "表2 损失函数组成对补偿效果的影响", "该表用于说明复合损失函数中各组成部分对补偿性能的作用。", rows)
-    _draw_table_png_cn("表2 损失函数组成对补偿效果的影响", rows, png_path, [230, 90, 90, 90, 110, 120, 130, 130])
+    _draw_table_png_cn("表2 损失函数组成对补偿效果的影响", rows, png_path, [230, 90, 90, 120, 130, 130])
 
 
 def _make_panel_contact_sheet(image_paths: Sequence[Path], output_path: Path, labels: Sequence[str]) -> None:

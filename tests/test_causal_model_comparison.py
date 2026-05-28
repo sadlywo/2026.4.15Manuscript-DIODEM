@@ -16,10 +16,10 @@ from project.utils.torch_compat import TORCH_AVAILABLE, torch
 
 
 class TestCausalModelComparison(unittest.TestCase):
-    def test_best_sensitivity_loss_profile_applies_expected_weights(self):
+    def test_final_composite_loss_profile_applies_expected_weights(self):
         config = {"loss_weights": {"time_l1": 1.0, "mse": 1.0}}
-        updated = _apply_loss_profile(config, "best_sensitivity")
-        self.assertEqual(updated["loss_weights"], LOSS_PROFILES["best_sensitivity"]["weights"])
+        updated = _apply_loss_profile(config, "final_composite")
+        self.assertEqual(updated["loss_weights"], LOSS_PROFILES["final_composite"]["weights"])
         self.assertEqual(config["loss_weights"]["mse"], 1.0)
 
     def test_nested_causal_config_resolves_repository_root(self):
@@ -28,7 +28,7 @@ class TestCausalModelComparison(unittest.TestCase):
             config_dir=Path("project/configs/causal_models"),
             output_root=Path("outputs/causal_model_comparison"),
             setting="by_experiment",
-            loss_profile="best_sensitivity",
+            loss_profile="final_composite",
         )
         self.assertEqual(Path(config["repo_root"]).resolve(), Path.cwd().resolve())
         self.assertIn("causal_model_comparison", config["outputs_root"])
@@ -47,7 +47,7 @@ class TestCausalModelComparison(unittest.TestCase):
             "CPU forward ms/window": "1.2000 +/- 0.1000",
             "Streaming ms/step": "0.0500 +/- 0.0050",
             "Deployment verdict": "yes_embedded_friendly",
-            "Loss profile": "best_sensitivity",
+            "Loss profile": "final_composite",
         }
         with tempfile.TemporaryDirectory() as tmpdir:
             paths = _write_comparison_table([row], Path(tmpdir))

@@ -1,12 +1,69 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
-from project.experiments.ablation import aggregate_ablation_seed_rows
+from project.experiments.ablation import aggregate_ablation_seed_rows, run_ablation_suite
 from project.main_make_loss_ablation_table import _build_output_rows
 
 
 class LossAblationMultiSeedTests(unittest.TestCase):
+    def test_run_ablation_suite_creates_variant_directory_before_saving_config(self):
+        with TemporaryDirectory() as tmp_dir:
+            repo_root = Path(tmp_dir)
+            base_config = {
+                "repo_root": str(repo_root),
+                "processed_root": "processed",
+                "outputs_root": "outputs/supervised_tcn_causal",
+                "seed": 42,
+                "model_name": "tcn_causal",
+                "model": {"attach_latent_dim": 8},
+                "loss_weights": {"time_l1": 1.0, "mse": 0.5, "spectral": 0.2},
+                "evaluation": {"checkpoint_name": "best.pt", "baseline_models": [], "trained_model_checkpoints": []},
+            }
+            metrics = {
+                "rmse_mean": 0.1,
+                "pearson_mean": 0.9,
+                "psd_distance_mean": 0.006,
+                "hf_ratio_improvement_mean": 5.0,
+                "acc_norm_rmse": 0.11,
+                "gyr_norm_rmse": 0.12,
+                "num_windows": 100,
+            }
+
+            with patch("project.experiments.ablation.require_torch"), patch(
+                "project.experiments.ablation.build_processed_splits"
+            ), patch("project.experiments.ablation.load_json", return_value=metrics):
+                summary_path = run_ablation_suite(
+                    base_config,
+                    variant_names=["full_model"],
+                    train=False,
+                    evaluate=False,
+                )
+
+            config_path = repo_root / "outputs" / "supervised_tcn_causal_ablations" / "full_model" / "resolved_config.json"
+            self.assertTrue(config_path.exists())
+            self.assertEqual(summary_path, repo_root / "outputs" / "supervised_tcn_causal_ablations" / "ablation_summary.csv")
+
+    def test_run_ablation_suite_rejects_removed_variants(self):
+        base_config = {
+            "repo_root": ".",
+            "processed_root": "processed",
+            "outputs_root": "outputs/supervised_tcn_causal",
+            "seed": 42,
+        }
+
+        with patch("project.experiments.ablation.require_torch"), patch("project.experiments.ablation.build_processed_splits"):
+            with self.assertRaisesRegex(ValueError, "no_derivative_loss"):
+                run_ablation_suite(
+                    base_config,
+                    variant_names=["no_derivative_loss"],
+                    train=False,
+                    evaluate=False,
+                )
+
     def test_aggregate_ablation_seed_rows_reports_mean_and_std(self):
         rows = [
             {
@@ -17,11 +74,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "attach_latent_dim": 8,
                 "time_l1": 1.0,
                 "mse": 0.5,
-                "derivative": 0.3,
                 "spectral": 0.2,
-                "smoothness": 0.0,
-                "attach_l2": 0.001,
-                "attach_temporal": 0.001,
                 "rmse_mean": 0.10,
                 "pearson_mean": 0.90,
                 "psd_distance_mean": 0.006,
@@ -38,11 +91,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "attach_latent_dim": 8,
                 "time_l1": 1.0,
                 "mse": 0.5,
-                "derivative": 0.3,
                 "spectral": 0.2,
-                "smoothness": 0.0,
-                "attach_l2": 0.001,
-                "attach_temporal": 0.001,
                 "rmse_mean": 0.14,
                 "pearson_mean": 0.94,
                 "psd_distance_mean": 0.010,
@@ -64,163 +113,55 @@ class LossAblationMultiSeedTests(unittest.TestCase):
         self.assertAlmostEqual(row["psd_distance_std"], 0.002)
         self.assertEqual(row["seed_list"], "42,43")
 
-    def test_supplementary_table_formats_multiseed_mean_plus_std(self):
+    def test_supplementary_table_formats_four_variant_multiseed_schema(self):
         summary_rows = [
-            {
-                "variant_name": "full_model",
-                "attach_latent_dim": "8",
-                "time_l1": "1.0",
-                "mse": "0.5",
-                "derivative": "0.3",
-                "spectral": "0.2",
-                "attach_l2": "0.001",
-                "attach_temporal": "0.001",
-                "rmse_mean": "0.1000",
-                "rmse_std": "0.0100",
-                "pearson_mean": "0.9000",
-                "pearson_std": "0.0200",
-                "psd_distance_mean": "0.00600",
-                "psd_distance_std": "0.00020",
-                "hf_ratio_improvement_mean": "5.000",
-                "hf_ratio_improvement_std": "0.100",
-                "acc_norm_rmse": "0.1100",
-                "acc_norm_rmse_std": "0.0100",
-                "gyr_norm_rmse": "0.1200",
-                "gyr_norm_rmse_std": "0.0200",
-                "num_windows": "100",
-                "num_seeds": "2",
-            },
-            {
-                "variant_name": "no_derivative_loss",
-                "attach_latent_dim": "8",
-                "time_l1": "1.0",
-                "mse": "0.5",
-                "derivative": "0.0",
-                "spectral": "0.2",
-                "attach_l2": "0.001",
-                "attach_temporal": "0.001",
-                "rmse_mean": "0.1100",
-                "rmse_std": "0.0300",
-                "pearson_mean": "0.8800",
-                "pearson_std": "0.0100",
-                "psd_distance_mean": "0.00660",
-                "psd_distance_std": "0.00030",
-                "hf_ratio_improvement_mean": "4.800",
-                "hf_ratio_improvement_std": "0.200",
-                "acc_norm_rmse": "0.1200",
-                "acc_norm_rmse_std": "0.0200",
-                "gyr_norm_rmse": "0.1300",
-                "gyr_norm_rmse_std": "0.0200",
-                "num_windows": "100",
-                "num_seeds": "2",
-            },
-            {
-                "variant_name": "no_spectral_loss",
-                "attach_latent_dim": "8",
-                "time_l1": "1.0",
-                "mse": "0.5",
-                "derivative": "0.3",
-                "spectral": "0.0",
-                "attach_l2": "0.001",
-                "attach_temporal": "0.001",
-                "rmse_mean": "0.1200",
-                "rmse_std": "0.0200",
-                "pearson_mean": "0.8700",
-                "pearson_std": "0.0100",
-                "psd_distance_mean": "0.00700",
-                "psd_distance_std": "0.00040",
-                "hf_ratio_improvement_mean": "4.700",
-                "hf_ratio_improvement_std": "0.200",
-                "acc_norm_rmse": "0.1300",
-                "acc_norm_rmse_std": "0.0200",
-                "gyr_norm_rmse": "0.1400",
-                "gyr_norm_rmse_std": "0.0200",
-                "num_windows": "100",
-                "num_seeds": "2",
-            },
-            {
-                "variant_name": "no_attachment_regularization",
-                "attach_latent_dim": "8",
-                "time_l1": "1.0",
-                "mse": "0.5",
-                "derivative": "0.3",
-                "spectral": "0.2",
-                "attach_l2": "0.0",
-                "attach_temporal": "0.0",
-                "rmse_mean": "0.1300",
-                "rmse_std": "0.0200",
-                "pearson_mean": "0.8600",
-                "pearson_std": "0.0100",
-                "psd_distance_mean": "0.00750",
-                "psd_distance_std": "0.00030",
-                "hf_ratio_improvement_mean": "4.600",
-                "hf_ratio_improvement_std": "0.200",
-                "acc_norm_rmse": "0.1400",
-                "acc_norm_rmse_std": "0.0200",
-                "gyr_norm_rmse": "0.1500",
-                "gyr_norm_rmse_std": "0.0200",
-                "num_windows": "100",
-                "num_seeds": "2",
-            },
-            {
-                "variant_name": "no_attachment_latent",
-                "attach_latent_dim": "0",
-                "time_l1": "1.0",
-                "mse": "0.5",
-                "derivative": "0.3",
-                "spectral": "0.2",
-                "attach_l2": "0.0",
-                "attach_temporal": "0.0",
-                "rmse_mean": "0.1400",
-                "rmse_std": "0.0200",
-                "pearson_mean": "0.8500",
-                "pearson_std": "0.0100",
-                "psd_distance_mean": "0.00800",
-                "psd_distance_std": "0.00030",
-                "hf_ratio_improvement_mean": "4.500",
-                "hf_ratio_improvement_std": "0.200",
-                "acc_norm_rmse": "0.1500",
-                "acc_norm_rmse_std": "0.0200",
-                "gyr_norm_rmse": "0.1600",
-                "gyr_norm_rmse_std": "0.0200",
-                "num_windows": "100",
-                "num_seeds": "2",
-            },
-            {
-                "variant_name": "mse_only",
-                "attach_latent_dim": "0",
-                "time_l1": "0.0",
-                "mse": "1.0",
-                "derivative": "0.0",
-                "spectral": "0.0",
-                "attach_l2": "0.0",
-                "attach_temporal": "0.0",
-                "rmse_mean": "0.1500",
-                "rmse_std": "0.0200",
-                "pearson_mean": "0.8400",
-                "pearson_std": "0.0100",
-                "psd_distance_mean": "0.00900",
-                "psd_distance_std": "0.00030",
-                "hf_ratio_improvement_mean": "4.400",
-                "hf_ratio_improvement_std": "0.200",
-                "acc_norm_rmse": "0.1600",
-                "acc_norm_rmse_std": "0.0200",
-                "gyr_norm_rmse": "0.1700",
-                "gyr_norm_rmse_std": "0.0200",
-                "num_windows": "100",
-                "num_seeds": "2",
-            },
+            _summary_row("full_model", attach_latent_dim="8", time_l1="1.0", mse="0.5", spectral="0.2", rmse="0.1000"),
+            _summary_row("mse_only", attach_latent_dim="8", time_l1="0.0", mse="1.0", spectral="0.0", rmse="0.1500"),
+            _summary_row("no_spectral_loss", attach_latent_dim="8", time_l1="1.0", mse="0.5", spectral="0.0", rmse="0.1200"),
+            _summary_row("no_attachment_latent", attach_latent_dim="0", time_l1="1.0", mse="0.5", spectral="0.2", rmse="0.1400"),
         ]
 
         output_rows = _build_output_rows(summary_rows)
-        full_row = output_rows[0]
-        no_deriv_row = output_rows[1]
+        headers = list(output_rows[0].keys())
 
-        self.assertEqual(full_row["RMSE"], "0.1000 +/- 0.0100")
-        self.assertEqual(full_row["PSD Dist."], "0.00600 +/- 0.00020")
-        self.assertEqual(full_row["Seeds"], "2")
-        self.assertEqual(no_deriv_row["RMSE"], "0.1100 +/- 0.0300")
-        self.assertEqual(no_deriv_row["Delta RMSE vs Full"], "+10.00%")
+        self.assertEqual([row["Variant"] for row in output_rows], ["Full model", "MSE only", "w/o spectral loss", "w/o attachment latent"])
+        self.assertEqual(output_rows[0]["RMSE"], "0.1000 +/- 0.0100")
+        self.assertEqual(output_rows[1]["Delta RMSE vs Full"], "+50.00%")
+        self.assertEqual(output_rows[0]["Seeds"], "2")
+        self.assertNotIn("Deriv.", headers)
+        self.assertNotIn("Att-L2", headers)
+        self.assertNotIn("Att-Temp", headers)
+
+
+def _summary_row(
+    variant_name: str,
+    attach_latent_dim: str,
+    time_l1: str,
+    mse: str,
+    spectral: str,
+    rmse: str,
+) -> dict[str, str]:
+    return {
+        "variant_name": variant_name,
+        "attach_latent_dim": attach_latent_dim,
+        "time_l1": time_l1,
+        "mse": mse,
+        "spectral": spectral,
+        "rmse_mean": rmse,
+        "rmse_std": "0.0100",
+        "pearson_mean": "0.9000",
+        "pearson_std": "0.0200",
+        "psd_distance_mean": "0.00600",
+        "psd_distance_std": "0.00020",
+        "hf_ratio_improvement_mean": "5.000",
+        "hf_ratio_improvement_std": "0.100",
+        "acc_norm_rmse": "0.1100",
+        "acc_norm_rmse_std": "0.0100",
+        "gyr_norm_rmse": "0.1200",
+        "gyr_norm_rmse_std": "0.0200",
+        "num_windows": "100",
+        "num_seeds": "2",
+    }
 
 
 if __name__ == "__main__":
