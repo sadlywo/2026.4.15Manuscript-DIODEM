@@ -1,0 +1,14 @@
+{
+  "models": [
+    {
+      "architecture_name": "lstm_causal",
+      "cpu_forward_ms_per_window": 32.008066177368164,
+      "embedded_deployment_verdict": "edge_only_or_accelerated",
+      "model_name": "lstm_causal",
+      "model_role": "trained",
+      "parameter_count": 202502,
+      "parameter_size_mb_fp32": 0.7724838256835938,
+      "trainable_parameter_count": 202502
+    }
+  ]
+}

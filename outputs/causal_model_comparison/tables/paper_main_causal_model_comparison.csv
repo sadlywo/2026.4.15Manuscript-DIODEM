@@ -1,0 +1,16 @@
+﻿Evaluation setting,Model,RMSE down,Pearson r up,PSD dist. down,HF imp. up,Params (K),CPU window (ms) down,Stream (ms/step) down,Embedded feasibility
+By experiment,TCN-causal,0.3912 +/- 0.0031,0.8512 +/- 0.0006,0.0530 +/- 0.0012,8.3459 +/- 0.0375,101.3,17.34 +/- 2.86,16.99 +/- 2.18,Embedded Linux feasible
+By experiment,Transformer-causal,0.4241 +/- 0.0003,0.8451 +/- 0.0014,0.0636 +/- 0.0006,8.1333 +/- 0.0543,399.1,19.02 +/- 4.06,26.95 +/- 3.73,Embedded Linux feasible
+By experiment,GRU-causal,0.4022 +/- 0.0015,0.8417 +/- 0.0009,0.0550 +/- 0.0007,8.3136 +/- 0.0162,152.1,30.88 +/- 3.96,0.34 +/- 0.22,Embedded Linux feasible
+By experiment,LSTM-causal,0.4066 +/- 0.0011,0.8397 +/- 0.0003,0.0541 +/- 0.0003,8.3213 +/- 0.0135,202.5,32.98 +/- 1.39,5.06 +/- 0.01,Edge/accelerated
+By experiment,MLP-causal,0.6952 +/- 0.0016,0.7213 +/- 0.0005,0.1898 +/- 0.0002,6.7831 +/- 0.0514,18.2,0.10 +/- 0.02,0.07 +/- 0.00,Embedded-friendly
+By motion type,TCN-causal,0.5650 +/- 0.0033,0.9104 +/- 0.0003,0.0904 +/- 0.0010,5.1176 +/- 0.0082,101.3,15.99 +/- 0.83,22.69 +/- 0.47,Embedded Linux feasible
+By motion type,Transformer-causal,0.5894 +/- 0.0006,0.9076 +/- 0.0005,0.1051 +/- 0.0007,5.0661 +/- 0.0119,399.1,24.66 +/- 3.99,29.33 +/- 0.95,Embedded Linux feasible
+By motion type,GRU-causal,0.5931 +/- 0.0029,0.9054 +/- 0.0010,0.0982 +/- 0.0017,5.1120 +/- 0.0074,152.1,35.68 +/- 3.87,0.38 +/- 0.25,Edge/accelerated
+By motion type,LSTM-causal,0.6135 +/- 0.0059,0.9021 +/- 0.0002,0.1008 +/- 0.0037,5.0839 +/- 0.0171,202.5,36.38 +/- 2.46,5.04 +/- 0.00,Edge/accelerated
+By motion type,MLP-causal,1.0158 +/- 0.0001,0.7770 +/- 0.0009,0.3112 +/- 0.0021,3.4426 +/- 0.0297,18.2,0.09 +/- 0.00,0.07 +/- 0.01,Embedded-friendly
+Anomaly test-only,TCN-causal,0.4070 +/- 0.0031,0.8495 +/- 0.0006,0.0606 +/- 0.0012,8.3852 +/- 0.0384,101.3,21.37 +/- 3.38,20.70 +/- 1.93,Embedded Linux feasible
+Anomaly test-only,Transformer-causal,0.4397 +/- 0.0004,0.8434 +/- 0.0014,0.0713 +/- 0.0006,8.1865 +/- 0.0522,399.1,23.98 +/- 1.40,30.33 +/- 1.68,Embedded Linux feasible
+Anomaly test-only,GRU-causal,0.4178 +/- 0.0014,0.8401 +/- 0.0008,0.0626 +/- 0.0006,8.3570 +/- 0.0186,152.1,30.03 +/- 3.72,0.36 +/- 0.25,Embedded Linux feasible
+Anomaly test-only,LSTM-causal,0.4226 +/- 0.0010,0.8381 +/- 0.0003,0.0622 +/- 0.0002,8.3595 +/- 0.0141,202.5,50.98 +/- 11.61,5.67 +/- 0.43,Edge/accelerated
+Anomaly test-only,MLP-causal,0.7119 +/- 0.0016,0.7197 +/- 0.0005,0.1971 +/- 0.0003,6.7975 +/- 0.0523,18.2,0.17 +/- 0.11,0.07 +/- 0.01,Embedded-friendly

@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "acc_channel_rmse_improvement": 0.4205891567291117,
+      "acc_channel_rmse_mean": 1.0694577189037522,
+      "acc_norm_rmse": 0.9658387330339459,
+      "gyr_channel_rmse_improvement": 0.07672897451379847,
+      "gyr_channel_rmse_mean": 0.3170506465205702,
+      "gyr_norm_rmse": 0.4645837735179853,
+      "hf_ratio_improvement_mean": 6.85299645430474,
+      "input_acc_channel_rmse_mean": 1.4900468756328638,
+      "input_acc_norm_rmse": 1.2493681899278055,
+      "input_gyr_channel_rmse_mean": 0.39377962103436864,
+      "input_gyr_norm_rmse": 0.6131447047228668,
+      "input_rmse_mean": 0.9419132483336162,
+      "model_name": "mlp_causal",
+      "model_role": "trained",
+      "num_windows": 8633,
+      "pearson_mean": 0.7206434103064202,
+      "psd_distance_mean": 0.1897205895038592,
+      "rmse_mean": 0.6932541827121611
+    }
+  ]
+}
