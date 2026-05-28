@@ -34,6 +34,20 @@ def _fmt(value: float, digits: int = 4) -> str:
     return f"{float(value):.{digits}f}"
 
 
+def _has_value(row: Dict[str, str], key: str) -> bool:
+    value = row.get(key)
+    return value is not None and str(value).strip() not in {"", "nan", "NaN", "None"}
+
+
+def _fmt_mean_std(row: Dict[str, str], mean_key: str, digits: int, std_key: str | None = None) -> str:
+    mean_text = _fmt(float(row[mean_key]), digits)
+    if std_key is None:
+        std_key = mean_key.replace("_mean", "_std") if mean_key.endswith("_mean") else f"{mean_key}_std"
+    if not _has_value(row, std_key):
+        return mean_text
+    return f"{mean_text} +/- {_fmt(float(row[std_key]), digits)}"
+
+
 def _fmt_delta_pct(current: float, baseline: float) -> str:
     delta = (float(current) - float(baseline)) / float(baseline) * 100.0
     return f"{delta:+.2f}%"
@@ -65,16 +79,17 @@ def _build_output_rows(summary_rows: List[Dict[str, str]]) -> List[Dict[str, str
                 "Spectral": _onoff(float(row["spectral"])),
                 "Att-L2": _onoff(float(row["attach_l2"])),
                 "Att-Temp": _onoff(float(row["attach_temporal"])),
-                "RMSE": _fmt(rmse, 4),
+                "RMSE": _fmt_mean_std(row, "rmse_mean", 4),
                 "Delta RMSE vs Full": _fmt_delta_pct(rmse, full_rmse),
-                "Pearson": _fmt(float(row["pearson_mean"]), 4),
-                "PSD Dist.": _fmt(psd, 5),
+                "Pearson": _fmt_mean_std(row, "pearson_mean", 4),
+                "PSD Dist.": _fmt_mean_std(row, "psd_distance_mean", 5),
                 "Delta PSD vs Full": _fmt_delta_pct(psd, full_psd),
-                "HF Improve.": _fmt(hf, 3),
+                "HF Improve.": _fmt_mean_std(row, "hf_ratio_improvement_mean", 3),
                 "Delta HF vs Full": _fmt_delta_pct(hf, full_hf),
-                "Acc Norm RMSE": _fmt(float(row["acc_norm_rmse"]), 4),
-                "Gyr Norm RMSE": _fmt(float(row["gyr_norm_rmse"]), 4),
+                "Acc Norm RMSE": _fmt_mean_std(row, "acc_norm_rmse", 4),
+                "Gyr Norm RMSE": _fmt_mean_std(row, "gyr_norm_rmse", 4),
                 "Test windows": str(int(float(row["num_windows"]))),
+                "Seeds": str(int(float(row.get("num_seeds", 1)))) if _has_value(row, "num_seeds") else "1",
             }
         )
     return output_rows
@@ -97,7 +112,8 @@ def _write_markdown(path: Path, rows: List[Dict[str, str]]) -> None:
     lines.append(
         "Each row corresponds to one ablation setting derived from the same attachment-aware TCN backbone. "
         "The table reports whether each loss component or latent mechanism is enabled, together with the resulting "
-        "test performance on 8,633 windows. Lower RMSE and PSD distance are better, whereas higher HF improvement is better."
+        "test performance. Metrics are reported as mean +/- standard deviation across seeds when multi-seed runs are available. "
+        "Lower RMSE and PSD distance are better, whereas higher HF improvement is better."
     )
     lines.append("")
     lines.append("| " + " | ".join(headers) + " |")
@@ -118,6 +134,13 @@ def _write_markdown(path: Path, rows: List[Dict[str, str]]) -> None:
         "- Using only MSE leads to the clearest overall degradation, indicating that point-wise reconstruction alone is insufficient for stable artifact compensation."
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def create_loss_ablation_table(input_csv: Path, output_csv: Path, output_md: Path) -> None:
+    rows = _read_rows(input_csv.resolve())
+    output_rows = _build_output_rows(rows)
+    _write_csv(output_csv.resolve(), output_rows)
+    _write_markdown(output_md.resolve(), output_rows)
 
 
 def main() -> None:
@@ -142,10 +165,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    rows = _read_rows(args.input_csv.resolve())
-    output_rows = _build_output_rows(rows)
-    _write_csv(args.output_csv.resolve(), output_rows)
-    _write_markdown(args.output_md.resolve(), output_rows)
+    create_loss_ablation_table(args.input_csv, args.output_csv, args.output_md)
 
     print(f"Wrote supplementary ablation CSV to {args.output_csv.resolve()}")
     print(f"Wrote supplementary ablation Markdown to {args.output_md.resolve()}")
