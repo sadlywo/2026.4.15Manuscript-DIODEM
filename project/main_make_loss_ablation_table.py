@@ -8,20 +8,16 @@ from typing import Dict, List
 
 VARIANT_LABELS = {
     "full_model": "Full model",
-    "no_derivative_loss": "w/o derivative loss",
-    "no_spectral_loss": "w/o spectral loss",
-    "no_attachment_regularization": "w/o attachment regularization",
-    "no_attachment_latent": "w/o attachment latent",
     "mse_only": "MSE only",
+    "no_spectral_loss": "w/o spectral loss",
+    "no_attachment_latent": "w/o attachment latent",
 }
 
 VARIANT_ORDER = [
     "full_model",
-    "no_derivative_loss",
-    "no_spectral_loss",
-    "no_attachment_regularization",
-    "no_attachment_latent",
     "mse_only",
+    "no_spectral_loss",
+    "no_attachment_latent",
 ]
 
 
@@ -75,10 +71,7 @@ def _build_output_rows(summary_rows: List[Dict[str, str]]) -> List[Dict[str, str
                 "Latent": "Y" if int(row["attach_latent_dim"]) > 0 else "N",
                 "L1": _onoff(float(row["time_l1"])),
                 "MSE": _onoff(float(row["mse"])),
-                "Deriv.": _onoff(float(row["derivative"])),
                 "Spectral": _onoff(float(row["spectral"])),
-                "Att-L2": _onoff(float(row["attach_l2"])),
-                "Att-Temp": _onoff(float(row["attach_temporal"])),
                 "RMSE": _fmt_mean_std(row, "rmse_mean", 4),
                 "Delta RMSE vs Full": _fmt_delta_pct(rmse, full_rmse),
                 "Pearson": _fmt_mean_std(row, "pearson_mean", 4),
@@ -123,12 +116,9 @@ def _write_markdown(path: Path, rows: List[Dict[str, str]]) -> None:
     lines.append("")
     lines.append("Notes:")
     lines.append("- `Latent` indicates whether the attachment latent branch is present.")
-    lines.append("- `Deriv.` denotes the temporal derivative consistency term.")
     lines.append("- `Spectral` denotes the frequency-domain consistency term.")
-    lines.append("- `Att-L2` and `Att-Temp` denote the latent magnitude and latent temporal smoothness regularizers, respectively.")
     lines.append(
-        "- Although removing the spectral term slightly reduces point-wise RMSE, it worsens frequency-domain alignment and high-frequency consistency, "
-        "which supports retaining the spectral component in the final objective."
+        "- The final composite objective contains L1, MSE, and spectral reconstruction terms."
     )
     lines.append(
         "- Using only MSE leads to the clearest overall degradation, indicating that point-wise reconstruction alone is insufficient for stable artifact compensation."

@@ -17,7 +17,7 @@ from project.evaluation.evaluate import (
     _build_group_delta_frame,
     _get_baseline_model_names,
 )
-from project.experiments.ablation import build_ablation_config
+from project.experiments.ablation import DEFAULT_ABLATION_VARIANTS, build_ablation_config
 from project.experiments.runtime import apply_runtime_overrides, build_seed_run_config, resolve_experiment_seeds
 from project.models import build_model
 from project.training.losses import CompositeLoss
@@ -385,7 +385,7 @@ class TestProjectDataHelpers(unittest.TestCase):
         self.assertNotIn("z_attach", outputs)
         self.assertNotIn("z_attach_sequence", outputs)
 
-    def test_composite_loss_accepts_attachment_aux_outputs(self):
+    def test_composite_loss_ignores_removed_legacy_weights(self):
         if not TORCH_AVAILABLE:
             self.skipTest("PyTorch is not available in this environment.")
         criterion = CompositeLoss(
@@ -406,10 +406,11 @@ class TestProjectDataHelpers(unittest.TestCase):
         }
         terms = criterion(predictions, targets, aux_outputs=aux_outputs)
         self.assertIn("l1", terms)
-        self.assertIn("derivative", terms)
+        self.assertIn("mse", terms)
         self.assertIn("spectral", terms)
-        self.assertIn("attach_l2", terms)
-        self.assertIn("attach_temporal", terms)
+        self.assertNotIn("derivative", terms)
+        self.assertNotIn("attach_l2", terms)
+        self.assertNotIn("attach_temporal", terms)
         self.assertGreaterEqual(float(terms["total"]), 0.0)
 
     def test_gru_and_transformer_models_return_prediction_bundle(self):
@@ -454,10 +455,7 @@ class TestProjectDataHelpers(unittest.TestCase):
             "loss_weights": {
                 "time_l1": 1.0,
                 "mse": 0.5,
-                "derivative": 0.3,
                 "spectral": 0.2,
-                "attach_l2": 0.001,
-                "attach_temporal": 0.001,
             },
             "evaluation": {
                 "checkpoint_name": "best.pt",
@@ -468,17 +466,19 @@ class TestProjectDataHelpers(unittest.TestCase):
         variant = {
             "name": "no_attachment_latent",
             "description": "Disable attachment latent code.",
-            "overrides": {
-                "model": {"attach_latent_dim": 0},
-                "loss_weights": {"attach_l2": 0.0, "attach_temporal": 0.0},
-            },
+            "overrides": {"model": {"attach_latent_dim": 0}},
         }
         config = build_ablation_config(base_config, variant, outputs_root="outputs/supervised_ablations/no_attachment_latent")
         self.assertEqual(config["ablation_variant"], "no_attachment_latent")
         self.assertEqual(config["model"]["attach_latent_dim"], 0)
-        self.assertEqual(config["loss_weights"]["attach_l2"], 0.0)
         self.assertEqual(config["evaluation"]["baseline_models"], [])
         self.assertEqual(config["evaluation"]["trained_model_checkpoints"], [])
+
+    def test_default_loss_ablation_variants_are_reduced_to_four_core_comparisons(self):
+        self.assertEqual(
+            [variant["name"] for variant in DEFAULT_ABLATION_VARIANTS],
+            ["full_model", "mse_only", "no_spectral_loss", "no_attachment_latent"],
+        )
 
     def test_runtime_overrides_suffix_paths_and_apply_seed_runs(self):
         base_config = {

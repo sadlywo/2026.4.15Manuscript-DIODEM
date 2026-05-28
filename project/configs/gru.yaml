@@ -61,11 +61,7 @@ num_workers: 0
 loss_weights:
   time_l1: 1.0
   mse: 0.5
-  derivative: 0.3
   spectral: 0.2
-  smoothness: 0.0
-  attach_l2: 0.0
-  attach_temporal: 0.0
 
 evaluation:
   max_visualizations: 8

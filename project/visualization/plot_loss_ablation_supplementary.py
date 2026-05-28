@@ -15,31 +15,25 @@ from matplotlib.patches import Patch
 
 VARIANT_ORDER = [
     "Full model",
-    "w/o derivative loss",
-    "w/o spectral loss",
-    "w/o attachment regularization",
-    "w/o attachment latent",
     "MSE only",
+    "w/o spectral loss",
+    "w/o attachment latent",
 ]
 
 VARIANT_LABELS = {
     "Full model": "Full model",
-    "w/o derivative loss": "w/o derivative",
-    "w/o spectral loss": "w/o spectral",
-    "w/o attachment regularization": "w/o attach. reg.",
-    "w/o attachment latent": "w/o attach. latent",
     "MSE only": "MSE only",
+    "w/o spectral loss": "w/o spectral",
+    "w/o attachment latent": "w/o attach. latent",
 }
 
-CONFIG_COLUMNS = ["Latent", "L1", "MSE", "Deriv.", "Spectral", "Att-L2", "Att-Temp"]
+CONFIG_COLUMNS = ["Latent", "L1", "MSE", "Spectral"]
 
 VARIANT_COLORS = {
     "Full model": "#0076B9",
-    "w/o derivative loss": "#74B9A2",
-    "w/o spectral loss": "#9BCB78",
-    "w/o attachment regularization": "#F2B35B",
-    "w/o attachment latent": "#D88B69",
     "MSE only": "#9B6AA8",
+    "w/o spectral loss": "#9BCB78",
+    "w/o attachment latent": "#D88B69",
 }
 
 
@@ -90,6 +84,23 @@ def _parse_metric_mean_std(value: object) -> tuple[float, float]:
     mean = float(numbers[0])
     std = float(numbers[1]) if len(numbers) > 1 else 0.0
     return mean, std
+
+
+def _padded_limits(values: pd.Series, errors: pd.Series | None = None, pad_fraction: float = 0.10) -> tuple[float, float]:
+    values_array = pd.to_numeric(values, errors="coerce").to_numpy(dtype=float)
+    if errors is None:
+        errors_array = np.zeros_like(values_array)
+    else:
+        errors_array = pd.to_numeric(errors, errors="coerce").fillna(0.0).to_numpy(dtype=float)
+    lower_values = values_array - errors_array
+    upper_values = values_array + errors_array
+    lower = float(np.nanmin(lower_values))
+    upper = float(np.nanmax(upper_values))
+    span = upper - lower
+    if not np.isfinite(span) or span <= 0:
+        span = max(abs(upper), 1.0) * 0.10
+    pad = span * pad_fraction
+    return lower - pad, upper + pad
 
 
 def _load_table(path: Path) -> pd.DataFrame:
@@ -153,7 +164,8 @@ def _plot_rmse(ax: plt.Axes, frame: pd.DataFrame) -> None:
     ax.set_xlabel("RMSE (lower is better)")
     ax.set_title("Primary reconstruction error", loc="left", fontsize=8, fontweight="bold")
     ax.grid(axis="x", color="#DDE3EA", lw=0.55, ls=(0, (2.0, 2.6)), zorder=0)
-    ax.set_xlim(0.112, max(values + errors) * 1.045)
+    left, right = _padded_limits(frame["RMSE Mean"], frame["RMSE Std"], pad_fraction=0.18)
+    ax.set_xlim(max(0.0, left), right * 1.06)
 
 
 def _plot_spectral_scatter(ax: plt.Axes, frame: pd.DataFrame) -> None:
@@ -185,11 +197,9 @@ def _plot_spectral_scatter(ax: plt.Axes, frame: pd.DataFrame) -> None:
             )
     offsets = {
         "Full model": (0.00005, 0.035),
-        "w/o derivative loss": (0.00004, -0.045),
-        "w/o spectral loss": (0.00004, -0.055),
-        "w/o attachment regularization": (-0.00035, -0.050),
-        "w/o attachment latent": (0.00006, 0.030),
         "MSE only": (0.00006, -0.025),
+        "w/o spectral loss": (0.00004, -0.055),
+        "w/o attachment latent": (0.00006, 0.030),
     }
     for _, row in frame.iterrows():
         dx, dy = offsets[str(row["Variant"])]
@@ -202,21 +212,66 @@ def _plot_spectral_scatter(ax: plt.Axes, frame: pd.DataFrame) -> None:
             ha="left",
             va="center",
         )
-    ax.annotate(
-        "better",
-        xy=(0.00655, 5.75),
-        xytext=(0.00755, 5.88),
-        arrowprops={"arrowstyle": "->", "lw": 0.7, "color": "#4B5563"},
-        fontsize=5.8,
-        color="#4B5563",
-    )
     ax.set_xlabel("PSD distance (lower)")
     ax.set_ylabel("HF improvement (higher)")
     ax.set_title("Spectral fidelity and high-frequency suppression", loc="left", fontsize=8, fontweight="bold")
     ax.grid(color="#DDE3EA", lw=0.55, ls=(0, (2.0, 2.6)), zorder=0)
-    ax.set_xlim(0.00625, 0.00815)
-    ax.set_ylim(5.38, 5.90)
-    ax.set_xticks([0.0065, 0.0070, 0.0075, 0.0080])
+    x_left, x_right = _padded_limits(frame["PSD Dist. Mean"], frame["PSD Dist. Std"], pad_fraction=0.16)
+    y_bottom, y_top = _padded_limits(frame["HF Improve. Mean"], frame["HF Improve. Std"], pad_fraction=0.20)
+    ax.set_xlim(x_left, x_right)
+    ax.set_ylim(y_bottom, y_top)
+    ax.annotate(
+        "better",
+        xy=(x_left + 0.18 * (x_right - x_left), y_top - 0.18 * (y_top - y_bottom)),
+        xytext=(x_left + 0.42 * (x_right - x_left), y_top - 0.06 * (y_top - y_bottom)),
+        arrowprops={"arrowstyle": "->", "lw": 0.7, "color": "#4B5563"},
+        fontsize=5.8,
+        color="#4B5563",
+    )
+
+
+def _plot_spectral_delta_bars(ax: plt.Axes, frame: pd.DataFrame) -> None:
+    plot_frame = frame.loc[frame["Variant"].astype(str) != "Full model"].copy().reset_index(drop=True)
+    plot_frame["PSD degradation %"] = plot_frame["Delta PSD %"]
+    plot_frame["HF degradation %"] = -plot_frame["Delta HF %"]
+    y = np.arange(len(plot_frame))[::-1]
+    offset = 0.18
+    psd_color = "#A94F4F"
+    hf_color = "#D8A24A"
+    improve_color = "#2F7F5F"
+
+    for yi, (_, row) in zip(y, plot_frame.iterrows()):
+        psd_value = float(row["PSD degradation %"])
+        hf_value = float(row["HF degradation %"])
+        psd_bar_color = improve_color if psd_value < 0 else psd_color
+        hf_bar_color = improve_color if hf_value < 0 else hf_color
+        ax.barh(yi + offset, psd_value, height=0.28, color=psd_bar_color, edgecolor="#263238", linewidth=0.3, zorder=3)
+        ax.barh(yi - offset, hf_value, height=0.28, color=hf_bar_color, edgecolor="#263238", linewidth=0.3, zorder=3)
+
+        psd_align = "left" if psd_value >= 0 else "right"
+        hf_align = "left" if hf_value >= 0 else "right"
+        psd_pad = 0.35 if psd_value >= 0 else -0.35
+        hf_pad = 0.35 if hf_value >= 0 else -0.35
+        ax.text(psd_value + psd_pad, yi + offset, f"{psd_value:+.1f}%", va="center", ha=psd_align, fontsize=5.4, color="#263238")
+        ax.text(hf_value + hf_pad, yi - offset, f"{hf_value:+.1f}%", va="center", ha=hf_align, fontsize=5.4, color="#263238")
+
+    max_abs = float(np.nanmax(np.abs(plot_frame[["PSD degradation %", "HF degradation %"]].to_numpy(dtype=float))))
+    x_limit = max(5.0, max_abs * 1.28)
+    ax.axvline(0, color="#263238", lw=0.75, zorder=2)
+    ax.set_xlim(-x_limit, x_limit)
+    ax.set_yticks(y)
+    ax.set_yticklabels(plot_frame["Variant label"], fontsize=6.2)
+    ax.set_xlabel("Change versus full model (%)")
+    ax.set_title("Spectral and high-frequency degradation", loc="left", fontsize=8, fontweight="bold")
+    ax.grid(axis="x", color="#DDE3EA", lw=0.55, ls=(0, (2.0, 2.6)), zorder=0)
+    ax.text(-x_limit * 0.98, y[0] + 0.65, "improved", fontsize=5.6, color=improve_color, ha="left", va="center")
+    ax.text(x_limit * 0.98, y[0] + 0.65, "worse", fontsize=5.6, color=psd_color, ha="right", va="center")
+    handles = [
+        Patch(facecolor=psd_color, edgecolor="#263238", label="PSD distance"),
+        Patch(facecolor=hf_color, edgecolor="#263238", label="HF loss"),
+        Patch(facecolor=improve_color, edgecolor="#263238", label="Improvement"),
+    ]
+    ax.legend(handles=handles, loc="lower right", fontsize=5.5, handlelength=1.0, borderaxespad=0.2)
 
 
 def _plot_delta_heatmap(ax: plt.Axes, frame: pd.DataFrame) -> None:
@@ -313,7 +368,7 @@ def make_two_panel_figure(table_path: Path, output_dir: Path) -> dict[str, Path]
     ax_b = fig.add_subplot(grid[0, 1])
 
     _plot_rmse(ax_a, frame)
-    _plot_spectral_scatter(ax_b, frame)
+    _plot_spectral_delta_bars(ax_b, frame)
     _panel_label(ax_a, "a")
     _panel_label(ax_b, "b")
 

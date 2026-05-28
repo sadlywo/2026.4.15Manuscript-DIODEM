@@ -63,15 +63,12 @@ CAUSAL_TABLE_COLUMNS = [
 ]
 
 LOSS_PROFILES = {
-    "best_sensitivity": {
-        "description": "L1=1.0, MSE=0.25, Derivative=0.3, Spectral=0.4, Attachment=1e-3/1e-3",
+    "final_composite": {
+        "description": "L1=1.0, MSE=0.5, Spectral=0.2",
         "weights": {
             "time_l1": 1.0,
-            "mse": 0.25,
-            "derivative": 0.3,
-            "spectral": 0.4,
-            "attach_l2": 0.001,
-            "attach_temporal": 0.001,
+            "mse": 0.5,
+            "spectral": 0.2,
         },
     },
 }
@@ -444,9 +441,9 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train, evaluate, and summarize causal deep IMU compensation models.")
     parser.add_argument("--setting", choices=sorted(SETTING_SPECS), default="by_experiment")
     parser.add_argument("--settings", choices=sorted(SETTING_SPECS), nargs="*", default=None)
-    parser.add_argument("--seeds", type=int, nargs="*", default=[42, 43, 44])
+    parser.add_argument("--seeds", type=int, nargs="*", default=[42, 43, 44, 45, 46])
     parser.add_argument("--models", nargs="*", default=list(CAUSAL_MODEL_ORDER))
-    parser.add_argument("--loss-profile", choices=sorted(LOSS_PROFILES), default="best_sensitivity")
+    parser.add_argument("--loss-profile", choices=sorted(LOSS_PROFILES), default="final_composite")
     parser.add_argument("--config-dir", type=Path, default=Path("project/configs/causal_models"))
     parser.add_argument("--output-root", type=Path, default=Path("outputs/causal_model_comparison"))
     parser.add_argument("--skip-train", action="store_true")

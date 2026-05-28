@@ -13,10 +13,10 @@ OUTPUT_DIR = ROOT / "outputs" / "paper_figures"
 
 SAMPLE_STEM = "kc_arm_exp01_motion01_seg1_00064_residual.png"
 PANEL_VARIANTS = [
-    ("full_model", "(A) Full model", "Composite objective"),
-    ("no_derivative_loss", "(B) w/o derivative loss", "Remove temporal derivative term"),
+    ("full_model", "(A) Full model", "L1 + MSE + spectral objective"),
+    ("mse_only", "(B) MSE only", "Point-wise reconstruction only"),
     ("no_spectral_loss", "(C) w/o spectral loss", "Remove frequency-domain term"),
-    ("mse_only", "(D) MSE only", "No derivative / spectral / attachment regularization"),
+    ("no_attachment_latent", "(D) w/o attachment latent", "Disable attachment latent branch"),
 ]
 
 
@@ -67,7 +67,7 @@ def build_ablation_svg() -> Path:
         '.legend-line-blue { stroke: #1f77b4; stroke-width: 3.2; }',
         '.legend-line-orange { stroke: #ff7f0e; stroke-width: 3.2; }',
         '</style>',
-        '<text x="48" y="48" class="title">Ablation Study of the Composite Loss and Attachment Design</text>',
+        '<text x="48" y="48" class="title">Ablation Study of the Final Loss and Attachment Design</text>',
         '<text x="48" y="74" class="subtitle">Same evaluation sample across variants. Blue: nonrigid-rigid residual, Orange: prediction-rigid residual.</text>',
         '<line x1="48" y1="95" x2="1372" y2="95" stroke="#e5e7eb" stroke-width="1.2"/>',
         '<line x1="1010" y1="52" x2="1044" y2="52" class="legend-line-blue"/>',
@@ -100,7 +100,7 @@ def build_ablation_svg() -> Path:
 
     parts.extend(
         [
-            '<text x="48" y="1148" class="caption">Figure note: Removing only the spectral term yields slightly lower RMSE, but the full model provides the best high-frequency artifact improvement; the MSE-only variant shows the clearest overall degradation.</text>',
+            '<text x="48" y="1148" class="caption">Figure note: The MSE-only variant tests point-wise reconstruction alone, while the spectral and attachment-latent ablations isolate the two retained design contributions.</text>',
             '</svg>',
         ]
     )

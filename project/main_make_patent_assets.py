@@ -333,10 +333,8 @@ def _make_loss_ablation_tables(ablation_csv: Path, output_dir: Path) -> None:
         rows.append(
             {
                 "Variant": raw["Variant"],
-                "Deriv.": raw["Deriv."],
                 "Spectral": raw["Spectral"],
                 "Latent": raw["Latent"],
-                "Att-Reg": "Y" if raw["Att-L2"] == "Y" or raw["Att-Temp"] == "Y" else "N",
                 "RMSE": raw["RMSE"],
                 "PSD Dist.": raw["PSD Dist."],
                 "HF Improve.": raw["HF Improve."],
@@ -353,7 +351,7 @@ def _make_loss_ablation_tables(ablation_csv: Path, output_dir: Path) -> None:
         "This table shows how different loss-function components affect compensation performance. Lower RMSE and PSD distance together with higher HF improvement indicate better overall behavior.",
         rows,
     )
-    _draw_table_png("Table 2. Ablation of Composite Loss Components", rows, png_path, col_widths=[260, 100, 120, 100, 110, 120, 140, 150])
+    _draw_table_png("Table 2. Ablation of Composite Loss Components", rows, png_path, col_widths=[260, 120, 100, 120, 140, 150])
 
 
 def _write_notes(path: Path, figure_path: Path, method_table_png: Path, ablation_table_png: Path) -> None:
@@ -378,7 +376,7 @@ def _write_notes(path: Path, figure_path: Path, method_table_png: Path, ablation
 - Suggested title: Effect of loss-function components on compensation performance
 - File: [{ablation_table_png.name}]({ablation_table_png.as_posix()})
 - Suggested description:
-  Table 2 shows the contribution of different loss-function components. The results indicate that relying only on a simple reconstruction term is insufficient, whereas introducing derivative consistency, spectral consistency, and attachment-state-related constraints leads to a more balanced performance in time-domain, frequency-domain, and dynamic-consistency metrics.
+  Table 2 shows the contribution of the retained loss-function components. The results indicate that relying only on a simple reconstruction term is insufficient, whereas combining time-domain and spectral reconstruction terms with attachment-aware modeling provides a more balanced compensation behavior.
 """
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
