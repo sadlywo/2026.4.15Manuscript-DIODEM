@@ -29,5 +29,6 @@ def test_firmware_contains_serial_hello_and_ai_placeholders():
     assert "USART3" in main_text
     assert "PD8" in main_text
     assert "PD9" in main_text
-    assert "DIODEM PlatformIO NUCLEO-H723ZG" in main_text
+    assert "BOOT_DIAG_V3" in main_text
+    assert "UART_TX_GUARD_LIMIT" in main_text
     assert "DiodeM_Stream_Push" in main_text

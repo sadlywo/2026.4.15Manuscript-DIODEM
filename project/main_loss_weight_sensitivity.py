@@ -14,10 +14,10 @@ if __package__ in {None, ""}:
 
 
 DEFAULT_WEIGHT_SENSITIVITY_SEEDS = [42, 43, 44, 45, 46]
-FINAL_LOSS_WEIGHTS = {"time_l1": 1.0, "mse": 0.5, "spectral": 0.2}
+FINAL_LOSS_WEIGHTS = {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2}
 LOCAL_WEIGHT_SWEEP_VALUES = {
     "time_l1": [0.25, 0.5, 1.0, 1.5, 2.0],
-    "mse": [0.125, 0.25, 0.5, 0.75, 1.0],
+    "mse": [0.5, 0.75, 1.0, 1.25, 1.5],
     "spectral": [0.05, 0.1, 0.2, 0.3, 0.4],
 }
 

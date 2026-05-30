@@ -18,22 +18,22 @@ DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
     {
         "name": "full_model",
         "description": "Attachment latent code + L1/MSE/spectral composite loss.",
-        "overrides": {},
+        "overrides": {"loss_weights": {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2}},
     },
     {
         "name": "no_l1_loss",
         "description": "Remove L1 reconstruction loss only.",
-        "overrides": {"loss_weights": {"time_l1": 0.0}},
+        "overrides": {"loss_weights": {"time_l1": 0.0, "mse": 1.0, "spectral": 0.2}},
     },
     {
         "name": "no_mse_loss",
         "description": "Remove MSE reconstruction loss only.",
-        "overrides": {"loss_weights": {"mse": 0.0}},
+        "overrides": {"loss_weights": {"time_l1": 1.0, "mse": 0.0, "spectral": 0.2}},
     },
     {
         "name": "no_spectral_loss",
         "description": "Remove spectral consistency loss only.",
-        "overrides": {"loss_weights": {"spectral": 0.0}},
+        "overrides": {"loss_weights": {"time_l1": 1.0, "mse": 1.0, "spectral": 0.0}},
     },
     {
         "name": "mse_only",
@@ -49,7 +49,10 @@ DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
     {
         "name": "no_attachment_latent",
         "description": "Disable attachment latent code while retaining the final composite loss.",
-        "overrides": {"model": {"attach_latent_dim": 0}},
+        "overrides": {
+            "loss_weights": {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2},
+            "model": {"attach_latent_dim": 0},
+        },
     },
 ]
 

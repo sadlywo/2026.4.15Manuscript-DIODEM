@@ -1,0 +1,18 @@
+**Supplementary Table Sx. Loss-function ablation study on the test split.**
+
+Each row corresponds to one ablation setting derived from the same attachment-aware TCN backbone. The table reports whether each loss component or latent mechanism is enabled, together with the resulting test performance. Metrics are reported as mean +/- standard deviation across seeds when multi-seed runs are available. Lower RMSE and PSD distance are better, whereas higher HF improvement is better.
+
+| Variant | Latent | L1 | MSE | Spectral | RMSE | Delta RMSE vs Full | Pearson | PSD Dist. | Delta PSD vs Full | HF Improve. | Delta HF vs Full | Acc Norm RMSE | Gyr Norm RMSE | Test windows | Seeds |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Full model | Y | Y | Y | Y | 0.3905 +/- 0.0033 | +0.00% | 0.8511 +/- 0.0003 | 0.05560 +/- 0.00198 | +0.00% | 8.291 +/- 0.047 | +0.00% | 0.5195 +/- 0.0019 | 0.1783 +/- 0.0025 | 8633 | 3 |
+| w/o L1 loss | Y | N | Y | Y | 0.4023 +/- 0.0015 | +3.04% | 0.8492 +/- 0.0005 | 0.05617 +/- 0.00052 | +1.03% | 8.299 +/- 0.034 | +0.09% | 0.5385 +/- 0.0026 | 0.1854 +/- 0.0010 | 8633 | 5 |
+| w/o MSE loss | Y | Y | N | Y | 0.3881 +/- 0.0011 | -0.60% | 0.8505 +/- 0.0008 | 0.05274 +/- 0.00070 | -5.14% | 8.323 +/- 0.027 | +0.38% | 0.5217 +/- 0.0027 | 0.1806 +/- 0.0011 | 8633 | 5 |
+| w/o spectral loss | Y | Y | Y | N | 0.3917 +/- 0.0032 | +0.32% | 0.8468 +/- 0.0012 | 0.05873 +/- 0.00148 | +5.62% | 8.218 +/- 0.051 | -0.88% | 0.5198 +/- 0.0027 | 0.1786 +/- 0.0019 | 8633 | 5 |
+| MSE only | Y | N | Y | N | 0.4080 +/- 0.0033 | +4.50% | 0.8384 +/- 0.0004 | 0.06532 +/- 0.00087 | +17.48% | 8.101 +/- 0.036 | -2.29% | 0.5378 +/- 0.0051 | 0.1848 +/- 0.0018 | 8633 | 5 |
+| w/o attachment latent | N | Y | Y | Y | 0.3921 +/- 0.0014 | +0.41% | 0.8496 +/- 0.0015 | 0.05665 +/- 0.00070 | +1.88% | 8.294 +/- 0.023 | +0.04% | 0.5264 +/- 0.0023 | 0.1807 +/- 0.0012 | 8633 | 5 |
+
+Notes:
+- `Latent` indicates whether the attachment latent branch is present.
+- `L1`, `MSE`, and `Spectral` indicate whether each active loss term is enabled.
+- The final composite objective contains L1, MSE, and spectral reconstruction terms.
+- `MSE only` is retained as a reconstruction-only reference; the single-term removals isolate the contribution of each loss component.

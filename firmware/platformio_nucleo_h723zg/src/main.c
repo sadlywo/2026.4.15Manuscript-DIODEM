@@ -7,21 +7,26 @@
 
 #include "imu_stream.h"
 
+#define UART_TX_GUARD_LIMIT 1000000U
+#define USART_READY_GUARD_LIMIT 1000000U
+
 static DiodeMImuStream g_stream;
 
 static void MX_GPIO_Init(void);
 static void MX_USART3_Polling_Init(void);
 static void Error_Handler(void);
 static void uart_write(const char *text);
-static void uart_write_char(char ch);
+static bool uart_write_char(char ch);
 static bool uart_read_char(uint8_t *ch);
 static bool uart_read_line(char *buffer, size_t buffer_size);
 static bool parse_sample_csv(const char *line, float sample[DIODEM_AI_CHANNELS]);
 static void print_result(uint32_t seq, DiodeMStreamStatus status, const DiodeMAiOutput *output);
+static void fault_loop(const char *code);
 
 int main(void) {
   HAL_Init();
   MX_GPIO_Init();
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   MX_USART3_Polling_Init();
 
   DiodeM_Stream_Init(&g_stream);
@@ -29,9 +34,9 @@ int main(void) {
     Error_Handler();
   }
 
-  uart_write("\r\nDIODEM PlatformIO NUCLEO-H723ZG ready\r\n");
-  uart_write("USART3 PD8 TX / PD9 RX, 115200 baud\r\n");
-  uart_write("Send: acc_x,acc_y,acc_z,gyr_x,gyr_y,gyr_z\r\n");
+  HAL_Delay(20U);
+  uart_write("BOOT_DIAG_V3\r\n");
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 
   uint32_t seq = 0U;
   uint32_t last_heartbeat = HAL_GetTick();
@@ -52,7 +57,7 @@ int main(void) {
     if ((HAL_GetTick() - last_heartbeat) >= 1000U) {
       last_heartbeat = HAL_GetTick();
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-      uart_write("HB,DIODEM PlatformIO NUCLEO-H723ZG\r\n");
+      uart_write("HB3\r\n");
     }
   }
 }
@@ -62,18 +67,20 @@ static void uart_write(const char *text) {
     return;
   }
   while (*text != '\0') {
-    uart_write_char(*text++);
-  }
-}
-
-static void uart_write_char(char ch) {
-  uint32_t start = HAL_GetTick();
-  while ((USART3->ISR & USART_ISR_TXE_TXFNF) == 0U) {
-    if ((HAL_GetTick() - start) > 100U) {
+    if (!uart_write_char(*text++)) {
       return;
     }
   }
-  USART3->TDR = (uint8_t)ch;
+}
+
+static bool uart_write_char(char ch) {
+  for (uint32_t guard = 0U; guard < UART_TX_GUARD_LIMIT; ++guard) {
+    if ((USART3->ISR & USART_ISR_TXE_TXFNF) != 0U) {
+      USART3->TDR = (uint8_t)ch;
+      return true;
+    }
+  }
+  return false;
 }
 
 static bool uart_read_char(uint8_t *ch) {
@@ -174,13 +181,16 @@ static void MX_USART3_Polling_Init(void) {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   uint32_t pclk = 0U;
 
+  /* ST-LINK VCP on NUCLEO-H723ZG: USART3 TX=PD8, RX=PD9. */
   __HAL_RCC_USART3_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_USART3_FORCE_RESET();
+  __HAL_RCC_USART3_RELEASE_RESET();
 
   GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
@@ -195,8 +205,14 @@ static void MX_USART3_Polling_Init(void) {
     Error_Handler();
   }
   USART3->BRR = (pclk + (115200U / 2U)) / 115200U;
-  USART3->ICR = 0xFFFFFFFFU;
   USART3->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+
+  for (uint32_t guard = 0U; guard < USART_READY_GUARD_LIMIT; ++guard) {
+    if ((USART3->ISR & USART_ISR_TEACK) != 0U && (USART3->ISR & USART_ISR_REACK) != 0U) {
+      return;
+    }
+  }
+  Error_Handler();
 }
 
 static void MX_GPIO_Init(void) {
@@ -214,7 +230,33 @@ static void MX_GPIO_Init(void) {
 }
 
 static void Error_Handler(void) {
+  fault_loop("ERR\r\n");
+}
+
+static void fault_loop(const char *code) {
   __disable_irq();
-  while (1) {
+  if (code != NULL) {
+    uart_write(code);
   }
+  while (1) {
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+    for (volatile uint32_t delay = 0U; delay < 800000U; ++delay) {
+    }
+  }
+}
+
+void HardFault_Handler(void) {
+  fault_loop("HF\r\n");
+}
+
+void MemManage_Handler(void) {
+  fault_loop("MM\r\n");
+}
+
+void BusFault_Handler(void) {
+  fault_loop("BF\r\n");
+}
+
+void UsageFault_Handler(void) {
+  fault_loop("UF\r\n");
 }

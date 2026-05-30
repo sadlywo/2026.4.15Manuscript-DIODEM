@@ -19,6 +19,8 @@ class TestCausalModelComparison(unittest.TestCase):
     def test_final_composite_loss_profile_applies_expected_weights(self):
         config = {"loss_weights": {"time_l1": 1.0, "mse": 1.0}}
         updated = _apply_loss_profile(config, "final_composite")
+        self.assertEqual(LOSS_PROFILES["final_composite"]["weights"], {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2})
+        self.assertIn("MSE=1.0", LOSS_PROFILES["final_composite"]["description"])
         self.assertEqual(updated["loss_weights"], LOSS_PROFILES["final_composite"]["weights"])
         self.assertEqual(config["loss_weights"]["mse"], 1.0)
 

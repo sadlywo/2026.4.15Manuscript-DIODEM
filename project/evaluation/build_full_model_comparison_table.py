@@ -327,7 +327,7 @@ def _write_latex(frame: pd.DataFrame, path: Path) -> None:
     lines = [
         r"\begin{table*}[t]",
         r"\centering",
-        r"\caption{Complete comparison of causal neural models and classical statistical/filter baselines. Values are reported as mean $\pm$ standard deviation over three random seeds. $\Delta$RMSE denotes the percent RMSE gap relative to TCN-causal within the same evaluation setting. Wilcoxon $p$ values are paired tests over motion-level RMSE against TCN-causal.}",
+        r"\caption{Complete comparison of causal neural models and classical statistical/filter baselines. Values are reported as mean $\pm$ standard deviation over five random seeds. $\Delta$RMSE denotes the percent RMSE gap relative to TCN-causal within the same evaluation setting. Wilcoxon $p$ values are paired tests over motion-level RMSE against TCN-causal.}",
         r"\label{tab:full_model_comparison_statistical_baselines}",
         r"\resizebox{\textwidth}{!}{%",
         r"\begin{tabular}{lllcccccccccccl}",
@@ -357,7 +357,7 @@ def write_outputs(table: pd.DataFrame, output_dir: Path) -> Dict[str, Path]:
     presentation.to_csv(csv_path, index=False, encoding="utf-8-sig")
     caption = (
         "Complete comparison of causal neural models and classical statistical/filter baselines. "
-        "Values are mean +/- std over three random seeds. Delta RMSE is relative to TCN-causal; "
+        "Values are mean +/- std over five random seeds. Delta RMSE is relative to TCN-causal; "
         "Wilcoxon p values are paired over motion-level RMSE."
     )
     md_path.write_text(caption + "\n\n" + presentation.to_markdown(index=False), encoding="utf-8")

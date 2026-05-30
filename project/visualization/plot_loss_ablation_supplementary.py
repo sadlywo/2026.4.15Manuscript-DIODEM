@@ -34,12 +34,12 @@ VARIANT_LABELS = {
 CONFIG_COLUMNS = ["Latent", "L1", "MSE", "Spectral"]
 
 VARIANT_COLORS = {
-    "Full model": "#66BC98",
-    "w/o L1 loss": "#8BCF8B",
-    "w/o MSE loss": "#80B1D3",
-    "w/o spectral loss": "#AAD09D",
-    "w/o attachment latent": "#E3EA96",
-    "MSE only": "#FCD089",
+    "Full model": "#484878",
+    "w/o L1 loss": "#D88C72",
+    "w/o MSE loss": "#42949E",
+    "w/o spectral loss": "#8BCF8B",
+    "MSE only": "#E0A339",
+    "w/o attachment latent": "#8A8A8A",
 }
 
 
@@ -152,21 +152,36 @@ def _plot_rmse(ax: plt.Axes, frame: pd.DataFrame) -> None:
     values = frame["RMSE Mean"].to_numpy(dtype=float)
     errors = frame["RMSE Std"].to_numpy(dtype=float)
     colors = [VARIANT_COLORS[str(v)] for v in frame["Variant"]]
-    bars = ax.barh(y, values, color=colors, edgecolor="#263238", linewidth=0.38, height=0.54, zorder=3)
-    if np.any(errors > 0):
-        ax.errorbar(values, y, xerr=errors, fmt="none", ecolor="#263238", elinewidth=0.65, capsize=1.8, zorder=4)
-    bars[0].set_edgecolor("black")
-    bars[0].set_linewidth(0.85)
     full_rmse = float(frame.loc[frame["Variant"].astype(str) == "Full model", "RMSE Mean"].iloc[0])
-    ax.axvline(full_rmse, color="#263238", lw=0.85, ls=(0, (2, 2)), zorder=2)
+    ax.axvline(full_rmse, color="#263238", lw=0.85, ls=(0, (2, 2)), zorder=1)
     for yi, (_, row) in zip(y, frame.iterrows()):
+        variant = str(row["Variant"])
+        color = VARIANT_COLORS[variant]
         delta = float(row["Delta RMSE %"])
+        ax.errorbar(
+            row["RMSE Mean"],
+            yi,
+            xerr=row["RMSE Std"],
+            fmt="o",
+            ms=5.1 if variant != "Full model" else 6.2,
+            color=color,
+            ecolor=color,
+            elinewidth=1.0,
+            capsize=2.4,
+            mec="white",
+            mew=0.55,
+            zorder=4,
+        )
         label = f"{row['RMSE Mean']:.4f}"
-        if str(row["Variant"]) != "Full model":
+        if variant != "Full model":
             label += f" ({delta:+.2f}%)"
-        ax.text(row["RMSE Mean"] + row["RMSE Std"] + 0.0010, yi, label, va="center", ha="left", fontsize=5.5, color="#263238")
+        ax.text(row["RMSE Mean"] + row["RMSE Std"] + 0.0010, yi, label, va="center", ha="left", fontsize=5.6, color="#263238")
     ax.set_yticks(y)
-    ax.set_yticklabels(frame["Variant label"], fontsize=6.2)
+    if "Seeds" in frame.columns:
+        ytick_labels = [f"{row['Variant label']} (n={int(row['Seeds'])})" for _, row in frame.iterrows()]
+    else:
+        ytick_labels = frame["Variant label"].tolist()
+    ax.set_yticklabels(ytick_labels, fontsize=6.2)
     ax.set_xlabel("RMSE (lower is better)")
     ax.set_title("Primary reconstruction error", loc="left", fontsize=8.2, fontweight="bold")
     ax.grid(axis="x", color="#DDE3EA", lw=0.55, ls=(0, (2.0, 2.6)), zorder=0)
@@ -265,7 +280,7 @@ def _plot_spectral_delta_bars(ax: plt.Axes, frame: pd.DataFrame) -> None:
     ax.set_yticks(y)
     ax.set_yticklabels(plot_frame["Variant label"], fontsize=6.2)
     ax.set_xlabel("Change versus full model (%)")
-    ax.set_title("Spectral and high-frequency degradation", loc="left", fontsize=8, fontweight="bold")
+    ax.set_title("Spectral and high-frequency effects", loc="left", fontsize=8.2, fontweight="bold")
     ax.grid(axis="x", color="#DDE3EA", lw=0.55, ls=(0, (2.0, 2.6)), zorder=0)
     ax.text(-x_limit * 0.98, y[0] + 0.65, "improved", fontsize=5.6, color=improve_color, ha="left", va="center")
     ax.text(x_limit * 0.98, y[0] + 0.65, "worse", fontsize=5.6, color=psd_color, ha="right", va="center")
@@ -365,31 +380,17 @@ def make_two_panel_figure(table_path: Path, output_dir: Path) -> dict[str, Path]
     source_path = output_dir / "loss_ablation_two_panel_figure_source.csv"
     frame.to_csv(source_path, index=False)
 
-    fig = plt.figure(figsize=(7.35, 3.55), constrained_layout=False)
-    grid = fig.add_gridspec(1, 2, width_ratios=[1.08, 1.0], wspace=0.36)
+    fig = plt.figure(figsize=(7.35, 3.75), constrained_layout=False)
+    grid = fig.add_gridspec(1, 2, width_ratios=[1.08, 1.0], wspace=0.44)
     ax_a = fig.add_subplot(grid[0, 0])
     ax_b = fig.add_subplot(grid[0, 1])
 
     _plot_rmse(ax_a, frame)
-    _plot_spectral_scatter(ax_b, frame)
+    _plot_spectral_delta_bars(ax_b, frame)
     _panel_label(ax_a, "a")
     _panel_label(ax_b, "b")
 
-    handles = [
-        Patch(facecolor=VARIANT_COLORS["Full model"], edgecolor="#263238", label="Full model"),
-        Patch(facecolor="#74B9A2", edgecolor="#263238", label="Ablated variants"),
-        Patch(facecolor=VARIANT_COLORS["MSE only"], edgecolor="#263238", label="MSE-only baseline"),
-    ]
-    fig.legend(
-        handles=handles,
-        loc="upper center",
-        bbox_to_anchor=(0.52, 0.995),
-        ncol=3,
-        fontsize=8.5,
-        handlelength=1.1,
-        columnspacing=1.1,
-    )
-    fig.subplots_adjust(left=0.135, right=0.985, top=0.790, bottom=0.215)
+    fig.subplots_adjust(left=0.150, right=0.985, top=0.890, bottom=0.190)
 
     stem = output_dir / "loss_ablation_two_panel_nature"
     outputs = {
@@ -412,7 +413,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--table",
         type=Path,
-        default=Path("outputs/loss_ablation/figures/loss_ablation_two_panel_figure_source.csv"),
+        default=Path("outputs/paper_tables/supplementary_loss_ablation_table.csv"),
         help="Input supplementary loss ablation table.",
     )
     parser.add_argument(

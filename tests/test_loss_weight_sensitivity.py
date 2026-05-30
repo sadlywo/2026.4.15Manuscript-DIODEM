@@ -30,10 +30,10 @@ class LossWeightSensitivityTests(unittest.TestCase):
                 "l1_0p5",
                 "l1_1p5",
                 "l1_2p0",
-                "mse_0p125",
-                "mse_0p25",
+                "mse_0p5",
                 "mse_0p75",
-                "mse_1p0",
+                "mse_1p25",
+                "mse_1p5",
                 "spec_0p05",
                 "spec_0p1",
                 "spec_0p3",
@@ -149,7 +149,7 @@ def _summary_row(
     psd: float,
     hf: float,
     time_l1: float = 1.0,
-    mse: float = 0.5,
+    mse: float = 1.0,
     spectral: float = 0.2,
 ) -> dict[str, object]:
     return {

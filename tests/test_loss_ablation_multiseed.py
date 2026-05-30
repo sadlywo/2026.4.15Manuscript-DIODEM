@@ -20,7 +20,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "seed": 42,
                 "model_name": "tcn_causal",
                 "model": {"attach_latent_dim": 8},
-                "loss_weights": {"time_l1": 1.0, "mse": 0.5, "spectral": 0.2},
+                "loss_weights": {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2},
                 "evaluation": {"checkpoint_name": "best.pt", "baseline_models": [], "trained_model_checkpoints": []},
             }
             metrics = {
@@ -73,7 +73,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "seed": 42,
                 "attach_latent_dim": 8,
                 "time_l1": 1.0,
-                "mse": 0.5,
+                "mse": 1.0,
                 "spectral": 0.2,
                 "rmse_mean": 0.10,
                 "pearson_mean": 0.90,
@@ -90,7 +90,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "seed": 43,
                 "attach_latent_dim": 8,
                 "time_l1": 1.0,
-                "mse": 0.5,
+                "mse": 1.0,
                 "spectral": 0.2,
                 "rmse_mean": 0.14,
                 "pearson_mean": 0.94,
@@ -115,12 +115,12 @@ class LossAblationMultiSeedTests(unittest.TestCase):
 
     def test_supplementary_table_formats_complete_loss_variant_multiseed_schema(self):
         summary_rows = [
-            _summary_row("full_model", attach_latent_dim="8", time_l1="1.0", mse="0.5", spectral="0.2", rmse="0.1000"),
-            _summary_row("no_l1_loss", attach_latent_dim="8", time_l1="0.0", mse="0.5", spectral="0.2", rmse="0.1300"),
+            _summary_row("full_model", attach_latent_dim="8", time_l1="1.0", mse="1.0", spectral="0.2", rmse="0.1000"),
+            _summary_row("no_l1_loss", attach_latent_dim="8", time_l1="0.0", mse="1.0", spectral="0.2", rmse="0.1300"),
             _summary_row("no_mse_loss", attach_latent_dim="8", time_l1="1.0", mse="0.0", spectral="0.2", rmse="0.1250"),
-            _summary_row("no_spectral_loss", attach_latent_dim="8", time_l1="1.0", mse="0.5", spectral="0.0", rmse="0.1200"),
+            _summary_row("no_spectral_loss", attach_latent_dim="8", time_l1="1.0", mse="1.0", spectral="0.0", rmse="0.1200"),
             _summary_row("mse_only", attach_latent_dim="8", time_l1="0.0", mse="1.0", spectral="0.0", rmse="0.1500"),
-            _summary_row("no_attachment_latent", attach_latent_dim="0", time_l1="1.0", mse="0.5", spectral="0.2", rmse="0.1400"),
+            _summary_row("no_attachment_latent", attach_latent_dim="0", time_l1="1.0", mse="1.0", spectral="0.2", rmse="0.1400"),
         ]
 
         output_rows = _build_output_rows(summary_rows)

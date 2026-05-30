@@ -64,10 +64,10 @@ CAUSAL_TABLE_COLUMNS = [
 
 LOSS_PROFILES = {
     "final_composite": {
-        "description": "L1=1.0, MSE=0.5, Spectral=0.2",
+        "description": "L1=1.0, MSE=1.0, Spectral=0.2",
         "weights": {
             "time_l1": 1.0,
-            "mse": 0.5,
+            "mse": 1.0,
             "spectral": 0.2,
         },
     },
