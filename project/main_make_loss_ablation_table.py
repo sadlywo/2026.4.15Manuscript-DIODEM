@@ -8,15 +8,19 @@ from typing import Dict, List
 
 VARIANT_LABELS = {
     "full_model": "Full model",
-    "mse_only": "MSE only",
+    "no_l1_loss": "w/o L1 loss",
+    "no_mse_loss": "w/o MSE loss",
     "no_spectral_loss": "w/o spectral loss",
+    "mse_only": "MSE only",
     "no_attachment_latent": "w/o attachment latent",
 }
 
 VARIANT_ORDER = [
     "full_model",
-    "mse_only",
+    "no_l1_loss",
+    "no_mse_loss",
     "no_spectral_loss",
+    "mse_only",
     "no_attachment_latent",
 ]
 
@@ -116,12 +120,12 @@ def _write_markdown(path: Path, rows: List[Dict[str, str]]) -> None:
     lines.append("")
     lines.append("Notes:")
     lines.append("- `Latent` indicates whether the attachment latent branch is present.")
-    lines.append("- `Spectral` denotes the frequency-domain consistency term.")
+    lines.append("- `L1`, `MSE`, and `Spectral` indicate whether each active loss term is enabled.")
     lines.append(
         "- The final composite objective contains L1, MSE, and spectral reconstruction terms."
     )
     lines.append(
-        "- Using only MSE leads to the clearest overall degradation, indicating that point-wise reconstruction alone is insufficient for stable artifact compensation."
+        "- `MSE only` is retained as a reconstruction-only reference; the single-term removals isolate the contribution of each loss component."
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

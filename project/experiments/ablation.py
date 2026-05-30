@@ -21,8 +21,23 @@ DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
         "overrides": {},
     },
     {
+        "name": "no_l1_loss",
+        "description": "Remove L1 reconstruction loss only.",
+        "overrides": {"loss_weights": {"time_l1": 0.0}},
+    },
+    {
+        "name": "no_mse_loss",
+        "description": "Remove MSE reconstruction loss only.",
+        "overrides": {"loss_weights": {"mse": 0.0}},
+    },
+    {
+        "name": "no_spectral_loss",
+        "description": "Remove spectral consistency loss only.",
+        "overrides": {"loss_weights": {"spectral": 0.0}},
+    },
+    {
         "name": "mse_only",
-        "description": "Use only MSE reconstruction loss.",
+        "description": "Use only MSE reconstruction loss as a reconstruction-only reference.",
         "overrides": {
             "loss_weights": {
                 "time_l1": 0.0,
@@ -30,11 +45,6 @@ DEFAULT_ABLATION_VARIANTS: List[Dict[str, Any]] = [
                 "spectral": 0.0,
             }
         },
-    },
-    {
-        "name": "no_spectral_loss",
-        "description": "Remove spectral consistency loss only.",
-        "overrides": {"loss_weights": {"spectral": 0.0}},
     },
     {
         "name": "no_attachment_latent",

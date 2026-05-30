@@ -477,7 +477,7 @@ class TestProjectDataHelpers(unittest.TestCase):
     def test_default_loss_ablation_variants_are_reduced_to_four_core_comparisons(self):
         self.assertEqual(
             [variant["name"] for variant in DEFAULT_ABLATION_VARIANTS],
-            ["full_model", "mse_only", "no_spectral_loss", "no_attachment_latent"],
+            ["full_model", "no_l1_loss", "no_mse_loss", "no_spectral_loss", "mse_only", "no_attachment_latent"],
         )
 
     def test_runtime_overrides_suffix_paths_and_apply_seed_runs(self):
