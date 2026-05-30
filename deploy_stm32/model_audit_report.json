@@ -1,0 +1,282 @@
+{
+  "checkpoint": {
+    "exists": true,
+    "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\supervised_tcn_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "size_bytes": 1247006
+  },
+  "configs": {
+    "causal_model": {
+      "exists": true,
+      "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\project\\configs\\causal_models\\tcn_causal.yaml",
+      "size_bytes": 1762
+    },
+    "primary": {
+      "exists": true,
+      "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\project\\configs\\tcn_causal.yaml",
+      "size_bytes": 2122
+    }
+  },
+  "data": {
+    "pair_table": {
+      "exists": true,
+      "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\processed_by_experiment\\pair_table.csv",
+      "size_bytes": 83999
+    },
+    "test_samples": {
+      "exists": true,
+      "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\processed_by_experiment\\test_samples.pkl",
+      "size_bytes": 27071681
+    },
+    "train_samples": {
+      "exists": true,
+      "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\processed_by_experiment\\train_samples.pkl",
+      "size_bytes": 68791942
+    },
+    "val_samples": {
+      "exists": true,
+      "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\processed_by_experiment\\val_samples.pkl",
+      "size_bytes": 7862411
+    }
+  },
+  "deployment_summary": {
+    "models": [
+      {
+        "architecture_name": "tcn_causal",
+        "cpu_forward_ms_per_window": 1.3037130050361156,
+        "embedded_deployment_verdict": "possible_on_embedded_linux",
+        "model_name": "tcn_causal",
+        "model_role": "trained",
+        "parameter_count": 101326,
+        "parameter_size_mb_fp32": 0.38652801513671875,
+        "trainable_parameter_count": 101326
+      },
+      {
+        "architecture_name": "tcn",
+        "cpu_forward_ms_per_window": 1.3182366266846657,
+        "embedded_deployment_verdict": "possible_on_embedded_linux",
+        "model_name": "tcn",
+        "model_role": "trained_comparison",
+        "parameter_count": 101326,
+        "parameter_size_mb_fp32": 0.38652801513671875,
+        "trainable_parameter_count": 101326
+      },
+      {
+        "architecture_name": "gru",
+        "cpu_forward_ms_per_window": 2.666068207472563,
+        "embedded_deployment_verdict": "possible_on_embedded_linux",
+        "model_name": "gru",
+        "model_role": "trained_comparison",
+        "parameter_count": 152070,
+        "parameter_size_mb_fp32": 0.5801010131835938,
+        "trainable_parameter_count": 152070
+      },
+      {
+        "architecture_name": "transformer",
+        "cpu_forward_ms_per_window": 1.2994403019547462,
+        "embedded_deployment_verdict": "possible_on_embedded_linux",
+        "model_name": "transformer",
+        "model_role": "trained_comparison",
+        "parameter_count": 399110,
+        "parameter_size_mb_fp32": 1.5224838256835938,
+        "trainable_parameter_count": 399110
+      },
+      {
+        "architecture_name": "identity",
+        "cpu_forward_ms_per_window": 0.001317821443080902,
+        "embedded_deployment_verdict": "yes_classical_filter",
+        "model_name": "identity",
+        "model_role": "baseline",
+        "parameter_count": 0,
+        "parameter_size_mb_fp32": 0.0,
+        "trainable_parameter_count": 0
+      },
+      {
+        "architecture_name": "lowpass",
+        "cpu_forward_ms_per_window": 0.029835477471351624,
+        "embedded_deployment_verdict": "yes_classical_filter",
+        "model_name": "lowpass",
+        "model_role": "baseline",
+        "parameter_count": 0,
+        "parameter_size_mb_fp32": 0.0,
+        "trainable_parameter_count": 0
+      },
+      {
+        "architecture_name": "butterworth",
+        "cpu_forward_ms_per_window": 2.0914118364453316,
+        "embedded_deployment_verdict": "yes_classical_filter",
+        "model_name": "butterworth",
+        "model_role": "baseline",
+        "parameter_count": 0,
+        "parameter_size_mb_fp32": 0.0,
+        "trainable_parameter_count": 0
+      },
+      {
+        "architecture_name": "savgol",
+        "cpu_forward_ms_per_window": 2.1334508806467056,
+        "embedded_deployment_verdict": "yes_classical_filter",
+        "model_name": "savgol",
+        "model_role": "baseline",
+        "parameter_count": 0,
+        "parameter_size_mb_fp32": 0.0,
+        "trainable_parameter_count": 0
+      },
+      {
+        "architecture_name": "wiener",
+        "cpu_forward_ms_per_window": 0.4309011250734329,
+        "embedded_deployment_verdict": "yes_classical_filter",
+        "model_name": "wiener",
+        "model_role": "baseline",
+        "parameter_count": 0,
+        "parameter_size_mb_fp32": 0.0,
+        "trainable_parameter_count": 0
+      }
+    ]
+  },
+  "discovered_checkpoints": [
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\supervised_tcn_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_anomaly_test_only\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_anomaly_test_only\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_anomaly_test_only\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_anomaly_test_only\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_anomaly_test_only\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_anomaly_test_only\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_experiment\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_experiment\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_experiment\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_experiment\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_motion_type\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_motion_type\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_motion_type\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_motion_type\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_motion_type\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\gru_causal_by_motion_type\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_anomaly_test_only\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_anomaly_test_only\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_anomaly_test_only\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_anomaly_test_only\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_anomaly_test_only\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_anomaly_test_only\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_experiment\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_experiment\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_experiment\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_experiment\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_motion_type\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_motion_type\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_motion_type\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_motion_type\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_motion_type\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\lstm_causal_by_motion_type\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_anomaly_test_only\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_anomaly_test_only\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_anomaly_test_only\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_anomaly_test_only\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_anomaly_test_only\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_anomaly_test_only\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_experiment\\seed_runs\\seed_0043\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_experiment\\seed_runs\\seed_0043\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_experiment\\seed_runs\\seed_0044\\training\\checkpoints\\best.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_experiment\\seed_runs\\seed_0044\\training\\checkpoints\\last.pt",
+    "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\causal_model_comparison\\mlp_causal_by_motion_type\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt"
+  ],
+  "model": {
+    "checkpoint_epoch": 47,
+    "input_channels": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+    ],
+    "model_config": {
+      "attach_latent_dim": 8,
+      "butter_cutoff_hz": 5.0,
+      "butter_order": 4,
+      "causal": true,
+      "dropout": 0.1,
+      "gru_hidden_dim": 128,
+      "gru_num_layers": 2,
+      "hidden_dim": 64,
+      "kernel_size": 3,
+      "mlp_hidden_dim": 128,
+      "num_layers": 4,
+      "savgol_polyorder": 3,
+      "savgol_window_length": 9,
+      "transformer_ff_dim": 256,
+      "transformer_model_dim": 128,
+      "transformer_num_heads": 4,
+      "transformer_num_layers": 3,
+      "wiener_window_size": 7
+    },
+    "model_name": "tcn_causal",
+    "normalization": "per_channel_zscore",
+    "parameter_count": 101326,
+    "parameter_size_mb_fp32": 0.38652801513671875,
+    "receptive_field": 61,
+    "sampling_frequency": 40.0,
+    "stride": 16,
+    "target_channels": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+    ],
+    "window_size": 64
+  },
+  "normalization": {
+    "exists": true,
+    "input_mean": [
+      -0.012162608094513416,
+      -1.005703091621399,
+      3.5020763874053955,
+      -0.009809555485844612,
+      -0.005450739525258541,
+      0.0020694262348115444
+    ],
+    "input_std": [
+      5.956593036651611,
+      5.983036994934082,
+      5.06555700302124,
+      1.9069567918777466,
+      1.2362844944000244,
+      0.9681030511856079
+    ],
+    "mode": "per_channel_zscore",
+    "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\processed_by_experiment\\normalization_stats.json",
+    "target_mean": [
+      -0.007758175954222679,
+      -1.2969622611999512,
+      4.322178363800049,
+      -0.011171592399477959,
+      -0.007416660897433758,
+      0.0015425781020894647
+    ],
+    "target_std": [
+      5.824613571166992,
+      5.372920989990234,
+      4.690978527069092,
+      1.7278544902801514,
+      1.1676394939422607,
+      0.938804566860199
+    ]
+  },
+  "processed_root": {
+    "exists": true,
+    "path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\processed_by_experiment",
+    "size_bytes": 0
+  },
+  "repo_root": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM",
+  "torch": {
+    "attempted": true,
+    "available": true,
+    "error": null
+  }
+}

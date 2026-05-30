@@ -20,7 +20,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "seed": 42,
                 "model_name": "tcn_causal",
                 "model": {"attach_latent_dim": 8},
-                "loss_weights": {"time_l1": 1.0, "mse": 0.5, "spectral": 0.2},
+                "loss_weights": {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2},
                 "evaluation": {"checkpoint_name": "best.pt", "baseline_models": [], "trained_model_checkpoints": []},
             }
             metrics = {
@@ -73,7 +73,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "seed": 42,
                 "attach_latent_dim": 8,
                 "time_l1": 1.0,
-                "mse": 0.5,
+                "mse": 1.0,
                 "spectral": 0.2,
                 "rmse_mean": 0.10,
                 "pearson_mean": 0.90,
@@ -90,7 +90,7 @@ class LossAblationMultiSeedTests(unittest.TestCase):
                 "seed": 43,
                 "attach_latent_dim": 8,
                 "time_l1": 1.0,
-                "mse": 0.5,
+                "mse": 1.0,
                 "spectral": 0.2,
                 "rmse_mean": 0.14,
                 "pearson_mean": 0.94,
@@ -113,20 +113,27 @@ class LossAblationMultiSeedTests(unittest.TestCase):
         self.assertAlmostEqual(row["psd_distance_std"], 0.002)
         self.assertEqual(row["seed_list"], "42,43")
 
-    def test_supplementary_table_formats_four_variant_multiseed_schema(self):
+    def test_supplementary_table_formats_complete_loss_variant_multiseed_schema(self):
         summary_rows = [
-            _summary_row("full_model", attach_latent_dim="8", time_l1="1.0", mse="0.5", spectral="0.2", rmse="0.1000"),
+            _summary_row("full_model", attach_latent_dim="8", time_l1="1.0", mse="1.0", spectral="0.2", rmse="0.1000"),
+            _summary_row("no_l1_loss", attach_latent_dim="8", time_l1="0.0", mse="1.0", spectral="0.2", rmse="0.1300"),
+            _summary_row("no_mse_loss", attach_latent_dim="8", time_l1="1.0", mse="0.0", spectral="0.2", rmse="0.1250"),
+            _summary_row("no_spectral_loss", attach_latent_dim="8", time_l1="1.0", mse="1.0", spectral="0.0", rmse="0.1200"),
             _summary_row("mse_only", attach_latent_dim="8", time_l1="0.0", mse="1.0", spectral="0.0", rmse="0.1500"),
-            _summary_row("no_spectral_loss", attach_latent_dim="8", time_l1="1.0", mse="0.5", spectral="0.0", rmse="0.1200"),
-            _summary_row("no_attachment_latent", attach_latent_dim="0", time_l1="1.0", mse="0.5", spectral="0.2", rmse="0.1400"),
+            _summary_row("no_attachment_latent", attach_latent_dim="0", time_l1="1.0", mse="1.0", spectral="0.2", rmse="0.1400"),
         ]
 
         output_rows = _build_output_rows(summary_rows)
         headers = list(output_rows[0].keys())
 
-        self.assertEqual([row["Variant"] for row in output_rows], ["Full model", "MSE only", "w/o spectral loss", "w/o attachment latent"])
+        self.assertEqual(
+            [row["Variant"] for row in output_rows],
+            ["Full model", "w/o L1 loss", "w/o MSE loss", "w/o spectral loss", "MSE only", "w/o attachment latent"],
+        )
         self.assertEqual(output_rows[0]["RMSE"], "0.1000 +/- 0.0100")
-        self.assertEqual(output_rows[1]["Delta RMSE vs Full"], "+50.00%")
+        self.assertEqual(output_rows[4]["Delta RMSE vs Full"], "+50.00%")
+        self.assertEqual(output_rows[1]["L1"], "N")
+        self.assertEqual(output_rows[2]["MSE"], "N")
         self.assertEqual(output_rows[0]["Seeds"], "2")
         self.assertNotIn("Deriv.", headers)
         self.assertNotIn("Att-L2", headers)

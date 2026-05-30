@@ -1,0 +1,14 @@
+{
+  "models": [
+    {
+      "architecture_name": "tcn_causal",
+      "cpu_forward_ms_per_window": 1.2915845960378647,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "tcn_causal",
+      "model_role": "trained",
+      "parameter_count": 101326,
+      "parameter_size_mb_fp32": 0.38652801513671875,
+      "trainable_parameter_count": 101326
+    }
+  ]
+}

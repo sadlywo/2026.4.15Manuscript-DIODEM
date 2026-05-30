@@ -391,7 +391,7 @@ class TestProjectDataHelpers(unittest.TestCase):
         criterion = CompositeLoss(
             {
                 "time_l1": 1.0,
-                "mse": 0.5,
+                "mse": 1.0,
                 "derivative": 0.25,
                 "spectral": 0.1,
                 "attach_l2": 0.01,
@@ -454,7 +454,7 @@ class TestProjectDataHelpers(unittest.TestCase):
             "model": {"attach_latent_dim": 8},
             "loss_weights": {
                 "time_l1": 1.0,
-                "mse": 0.5,
+                "mse": 1.0,
                 "spectral": 0.2,
             },
             "evaluation": {
@@ -474,10 +474,19 @@ class TestProjectDataHelpers(unittest.TestCase):
         self.assertEqual(config["evaluation"]["baseline_models"], [])
         self.assertEqual(config["evaluation"]["trained_model_checkpoints"], [])
 
-    def test_default_loss_ablation_variants_are_reduced_to_four_core_comparisons(self):
+    def test_default_loss_ablation_variants_use_final_loss_weights(self):
         self.assertEqual(
             [variant["name"] for variant in DEFAULT_ABLATION_VARIANTS],
-            ["full_model", "mse_only", "no_spectral_loss", "no_attachment_latent"],
+            ["full_model", "no_l1_loss", "no_mse_loss", "no_spectral_loss", "mse_only", "no_attachment_latent"],
+        )
+        variant_by_name = {variant["name"]: variant for variant in DEFAULT_ABLATION_VARIANTS}
+        self.assertEqual(
+            variant_by_name["full_model"]["overrides"]["loss_weights"],
+            {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2},
+        )
+        self.assertEqual(
+            variant_by_name["no_attachment_latent"]["overrides"]["loss_weights"],
+            {"time_l1": 1.0, "mse": 1.0, "spectral": 0.2},
         )
 
     def test_runtime_overrides_suffix_paths_and_apply_seed_runs(self):

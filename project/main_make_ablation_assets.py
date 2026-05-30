@@ -14,9 +14,11 @@ OUTPUT_DIR = ROOT / "outputs" / "paper_figures"
 SAMPLE_STEM = "kc_arm_exp01_motion01_seg1_00064_residual.png"
 PANEL_VARIANTS = [
     ("full_model", "(A) Full model", "L1 + MSE + spectral objective"),
-    ("mse_only", "(B) MSE only", "Point-wise reconstruction only"),
-    ("no_spectral_loss", "(C) w/o spectral loss", "Remove frequency-domain term"),
-    ("no_attachment_latent", "(D) w/o attachment latent", "Disable attachment latent branch"),
+    ("no_l1_loss", "(B) w/o L1 loss", "Remove robust absolute-error term"),
+    ("no_mse_loss", "(C) w/o MSE loss", "Remove quadratic reconstruction term"),
+    ("no_spectral_loss", "(D) w/o spectral loss", "Remove frequency-domain term"),
+    ("mse_only", "(E) MSE only", "Point-wise reconstruction only"),
+    ("no_attachment_latent", "(F) w/o attachment latent", "Disable attachment latent branch"),
 ]
 
 
@@ -43,7 +45,7 @@ def build_ablation_svg() -> Path:
     summary = _load_ablation_rows(TABLE_PATH)
 
     fig_width = 1420
-    fig_height = 1180
+    fig_height = 1660
     margin_x = 48
     top_band = 110
     panel_gap_x = 30
@@ -100,7 +102,7 @@ def build_ablation_svg() -> Path:
 
     parts.extend(
         [
-            '<text x="48" y="1148" class="caption">Figure note: The MSE-only variant tests point-wise reconstruction alone, while the spectral and attachment-latent ablations isolate the two retained design contributions.</text>',
+            '<text x="48" y="1628" class="caption">Figure note: Single-term removals isolate the active L1, MSE, and spectral loss components; MSE-only provides a reconstruction-only reference.</text>',
             '</svg>',
         ]
     )

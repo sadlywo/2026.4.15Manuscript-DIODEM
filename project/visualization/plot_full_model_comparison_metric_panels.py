@@ -132,25 +132,58 @@ def _aggregate_mean_std(
     return mean, spread
 
 
+def _first_existing_column(frame: pd.DataFrame, candidates: list[str]) -> str:
+    for candidate in candidates:
+        if candidate in frame.columns:
+            return candidate
+    raise KeyError(f"None of these columns were found: {candidates}")
+
+
+def _parameters_to_k(parameters: pd.Series) -> float:
+    values = pd.to_numeric(parameters, errors="coerce").dropna()
+    if values.empty:
+        return 0.0
+    value = float(values.iloc[0])
+    return value / 1000.0 if value > 1000 else value
+
+
 def _load_and_aggregate(table_path: Path, error_mode: str) -> pd.DataFrame:
     raw = pd.read_csv(table_path)
+    columns = {
+        "rmse_mean": _first_existing_column(raw, ["rmse_mean"]),
+        "rmse_std": _first_existing_column(raw, ["rmse_std"]),
+        "pearson_mean": _first_existing_column(raw, ["pearson_mean"]),
+        "pearson_std": _first_existing_column(raw, ["pearson_std"]),
+        "psd_mean": _first_existing_column(raw, ["psd_distance_mean"]),
+        "psd_std": _first_existing_column(raw, ["psd_distance_std"]),
+        "hf_mean": _first_existing_column(raw, ["hf_improvement_mean"]),
+        "hf_std": _first_existing_column(raw, ["hf_improvement_std"]),
+        "cpu_mean": _first_existing_column(raw, ["cpu_forward_ms_per_window_mean", "cpu_window_ms_mean"]),
+        "cpu_std": _first_existing_column(raw, ["cpu_forward_ms_per_window_std", "cpu_window_ms_std"]),
+        "stream_mean": _first_existing_column(raw, ["streaming_ms_per_step_mean", "stream_ms_step_mean"]),
+        "stream_std": _first_existing_column(raw, ["streaming_ms_per_step_std", "stream_ms_step_std"]),
+        "fp32_size_mb": _first_existing_column(raw, ["fp32_size_mb"]),
+    }
+    params_column = "params_k" if "params_k" in raw.columns else _first_existing_column(raw, ["parameters"])
     rows: list[dict[str, float | str]] = []
     metric_pairs = {
-        "rmse": ("rmse_mean", "rmse_std"),
-        "pearson": ("pearson_mean", "pearson_std"),
-        "psd": ("psd_distance_mean", "psd_distance_std"),
-        "hf": ("hf_improvement_mean", "hf_improvement_std"),
-        "cpu": ("cpu_window_ms_mean", "cpu_window_ms_std"),
-        "stream": ("stream_ms_step_mean", "stream_ms_step_std"),
+        "rmse": (columns["rmse_mean"], columns["rmse_std"]),
+        "pearson": (columns["pearson_mean"], columns["pearson_std"]),
+        "psd": (columns["psd_mean"], columns["psd_std"]),
+        "hf": (columns["hf_mean"], columns["hf_std"]),
+        "cpu": (columns["cpu_mean"], columns["cpu_std"]),
+        "stream": (columns["stream_mean"], columns["stream_std"]),
     }
     for method in METHOD_ORDER:
         group = raw[raw["method"] == method]
+        if group.empty:
+            continue
         row: dict[str, float | str] = {
             "method": method,
             "label": SHORT_LABELS[method],
             "family": _method_family(method),
-            "params_k": float(pd.to_numeric(group["params_k"], errors="coerce").dropna().iloc[0]),
-            "fp32_size_mb": float(pd.to_numeric(group["fp32_size_mb"], errors="coerce").dropna().iloc[0]),
+            "params_k": _parameters_to_k(group[params_column]),
+            "fp32_size_mb": float(pd.to_numeric(group[columns["fp32_size_mb"]], errors="coerce").dropna().iloc[0]),
         }
         for prefix, (mean_col, std_col) in metric_pairs.items():
             mean, std = _aggregate_mean_std(group, mean_col, std_col, error_mode=error_mode)
@@ -303,7 +336,7 @@ def make_figure(table_path: Path, output_dir: Path, error_mode: str) -> dict[str
     _style()
     output_dir.mkdir(parents=True, exist_ok=True)
     frame = _load_and_aggregate(table_path, error_mode=error_mode)
-    source_path = output_dir / "full_model_comparison_metric_panels_source.csv"
+    source_path = output_dir / "complete_model_comparison_with_static_methods_numeric.csv"
     frame.to_csv(source_path, index=False)
 
     fig = plt.figure(figsize=(7.45, 5.70), constrained_layout=False)
@@ -379,7 +412,7 @@ def make_figure(table_path: Path, output_dir: Path, error_mode: str) -> dict[str
     )
     fig.subplots_adjust(left=0.098, right=0.992, top=0.915, bottom=0.085)
 
-    stem = output_dir / "full_model_comparison_metric_panels_nature"
+    stem = output_dir / "complete_model_comparison_with_static_methods_nature"
     outputs = {
         "svg": stem.with_suffix(".svg"),
         "pdf": stem.with_suffix(".pdf"),
@@ -400,7 +433,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--table",
         type=Path,
-        default=Path("outputs/causal_model_comparison/tables/full_model_comparison_with_statistical_baselines_numeric.csv"),
+        default=Path("outputs/causal_model_comparison/tables/complete_model_comparison_with_static_methods_numeric.csv"),
         help="Input numeric comparison table.",
     )
     parser.add_argument(
