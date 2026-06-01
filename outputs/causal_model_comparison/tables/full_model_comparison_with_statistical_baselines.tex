@@ -1,0 +1,45 @@
+\begin{table*}[t]
+\centering
+\caption{Complete comparison of causal neural models and classical statistical/filter baselines. Values are reported as mean $\pm$ standard deviation over five random seeds. $\Delta$RMSE denotes the percent RMSE gap relative to TCN-causal within the same evaluation setting. Wilcoxon $p$ values are paired tests over motion-level RMSE against TCN-causal.}
+\label{tab:full_model_comparison_statistical_baselines}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllcccccccccccl}
+\toprule
+Setting & Family & Method & Causal/online & RMSE ↓ & ΔRMSE vs TCN (%) & Wilcoxon p vs TCN & Motion pairs & Pearson r ↑ & PSD dist. ↓ & HF imp. ↑ & Params (K) & CPU window (ms) ↓ & Stream (ms/step) ↓ & Embedded feasibility \\
+\midrule
+By experiment & proposed causal neural model & TCN-causal & yes & 0.3901 $\pm$ 0.0021 & 0.0 & reference & 0 & 0.8492 $\pm$ 0.0006 & 0.0539 $\pm$ 0.0016 & 8.2798 $\pm$ 0.0611 & 101.3 & 1.428 $\pm$ 0.059 & 1.231 $\pm$ 0.017 & possible\_on\_embedded\_linux \\
+By experiment & causal neural comparator & Transformer-causal & yes & 0.4278 $\pm$ 0.0066 & 9.7 & <1e-4 & 21 & 0.8430 $\pm$ 0.0023 & 0.0661 $\pm$ 0.0014 & 8.0207 $\pm$ 0.1052 & 399.1 & 1.667 $\pm$ 0.084 & 1.774 $\pm$ 0.050 & possible\_on\_embedded\_linux \\
+By experiment & causal neural comparator & GRU-causal & yes & 0.4003 $\pm$ 0.0032 & 2.6 & 0.0049 & 21 & 0.8404 $\pm$ 0.0010 & 0.0559 $\pm$ 0.0010 & 8.2715 $\pm$ 0.0279 & 152.1 & 3.179 $\pm$ 0.050 & 0.128 $\pm$ 0.003 & possible\_on\_embedded\_linux \\
+By experiment & causal neural comparator & LSTM-causal & yes & 0.4094 $\pm$ 0.0020 & 4.9 & <1e-4 & 21 & 0.8373 $\pm$ 0.0007 & 0.0557 $\pm$ 0.0004 & 8.2432 $\pm$ 0.0354 & 202.5 & 1.442 $\pm$ 0.022 & 0.283 $\pm$ 0.033 & possible\_on\_embedded\_linux \\
+By experiment & causal neural comparator & MLP-causal & yes & 0.6886 $\pm$ 0.0020 & 76.5 & <1e-4 & 21 & 0.7272 $\pm$ 0.0007 & 0.1843 $\pm$ 0.0007 & 6.2755 $\pm$ 0.0876 & 18.2 & 0.127 $\pm$ 0.001 & 0.042 $\pm$ 0.000 & yes\_embedded\_friendly \\
+By experiment & classical/statistical baseline & Identity/raw & window/filter & 0.8173 $\pm$ 0.0000 & 109.5 & <1e-4 & 21 & 0.7254 $\pm$ 0.0000 & 0.2248 $\pm$ 0.0000 & 1.9592 $\pm$ 0.0000 & 0.0 & 0.001 $\pm$ 0.000 & NA & yes\_classical\_filter \\
+By experiment & classical/statistical baseline & Moving-average low-pass & window/filter & 0.5575 $\pm$ 0.0000 & 42.9 & <1e-4 & 21 & 0.8398 $\pm$ 0.0000 & 0.1323 $\pm$ 0.0000 & 7.9824 $\pm$ 0.0000 & 0.0 & 0.030 $\pm$ 0.000 & NA & yes\_classical\_filter \\
+By experiment & classical/statistical baseline & Butterworth low-pass & window/filter & 0.5716 $\pm$ 0.0000 & 46.5 & <1e-4 & 21 & 0.7975 $\pm$ 0.0000 & 0.1206 $\pm$ 0.0000 & 8.0568 $\pm$ 0.0000 & 0.0 & 2.095 $\pm$ 0.021 & NA & yes\_classical\_filter \\
+By experiment & classical/statistical baseline & Savitzky-Golay & window/filter & 0.5852 $\pm$ 0.0000 & 50.0 & <1e-4 & 21 & 0.7818 $\pm$ 0.0000 & 0.1203 $\pm$ 0.0000 & 8.1773 $\pm$ 0.0000 & 0.0 & 2.132 $\pm$ 0.031 & NA & yes\_classical\_filter \\
+By experiment & classical/statistical baseline & Wiener filter & window/filter & 0.6524 $\pm$ 0.0000 & 67.2 & <1e-4 & 21 & 0.7367 $\pm$ 0.0000 & 0.1380 $\pm$ 0.0000 & 7.6115 $\pm$ 0.0000 & 0.0 & 0.436 $\pm$ 0.006 & NA & yes\_classical\_filter \\
+\midrule
+By motion type & proposed causal neural model & TCN-causal & yes & 0.5798 $\pm$ 0.0096 & 0.0 & reference & 0 & 0.9053 $\pm$ 0.0027 & 0.0995 $\pm$ 0.0040 & 5.0671 $\pm$ 0.0367 & 101.3 & 1.417 $\pm$ 0.048 & 1.280 $\pm$ 0.036 & possible\_on\_embedded\_linux \\
+By motion type & causal neural comparator & Transformer-causal & yes & 0.5995 $\pm$ 0.0045 & 3.4 & 0.0625 & 5 & 0.9034 $\pm$ 0.0013 & 0.1119 $\pm$ 0.0015 & 5.0180 $\pm$ 0.0225 & 399.1 & 1.663 $\pm$ 0.068 & 1.827 $\pm$ 0.008 & possible\_on\_embedded\_linux \\
+By motion type & causal neural comparator & GRU-causal & yes & 0.6107 $\pm$ 0.0102 & 5.3 & 0.0625 & 5 & 0.9012 $\pm$ 0.0013 & 0.1096 $\pm$ 0.0064 & 5.0545 $\pm$ 0.0353 & 152.1 & 3.296 $\pm$ 0.054 & 0.123 $\pm$ 0.001 & possible\_on\_embedded\_linux \\
+By motion type & causal neural comparator & LSTM-causal & yes & 0.6297 $\pm$ 0.0126 & 8.6 & 0.0625 & 5 & 0.8978 $\pm$ 0.0025 & 0.1128 $\pm$ 0.0063 & 5.0252 $\pm$ 0.0357 & 202.5 & 1.487 $\pm$ 0.047 & 0.268 $\pm$ 0.017 & possible\_on\_embedded\_linux \\
+By motion type & causal neural comparator & MLP-causal & yes & 1.0257 $\pm$ 0.0189 & 76.9 & 0.0625 & 5 & 0.7805 $\pm$ 0.0018 & 0.3117 $\pm$ 0.0045 & 3.1377 $\pm$ 0.2454 & 18.2 & 0.128 $\pm$ 0.001 & 0.042 $\pm$ 0.000 & yes\_embedded\_friendly \\
+By motion type & classical/statistical baseline & Identity/raw & window/filter & 1.2119 $\pm$ 0.0000 & 109.0 & 0.0625 & 5 & 0.7825 $\pm$ 0.0000 & 0.4132 $\pm$ 0.0000 & 1.3063 $\pm$ 0.0000 & 0.0 & 0.001 $\pm$ 0.000 & NA & yes\_classical\_filter \\
+By motion type & classical/statistical baseline & Moving-average low-pass & window/filter & 0.7865 $\pm$ 0.0000 & 35.6 & 0.0625 & 5 & 0.8765 $\pm$ 0.0000 & 0.2222 $\pm$ 0.0000 & 4.6914 $\pm$ 0.0000 & 0.0 & 0.030 $\pm$ 0.001 & NA & yes\_classical\_filter \\
+By motion type & classical/statistical baseline & Butterworth low-pass & window/filter & 0.7883 $\pm$ 0.0000 & 36.0 & 0.0625 & 5 & 0.8604 $\pm$ 0.0000 & 0.1924 $\pm$ 0.0000 & 4.6743 $\pm$ 0.0000 & 0.0 & 2.039 $\pm$ 0.013 & NA & yes\_classical\_filter \\
+By motion type & classical/statistical baseline & Savitzky-Golay & window/filter & 0.8108 $\pm$ 0.0000 & 39.8 & 0.0625 & 5 & 0.8550 $\pm$ 0.0000 & 0.1930 $\pm$ 0.0000 & 4.7639 $\pm$ 0.0000 & 0.0 & 2.093 $\pm$ 0.011 & NA & yes\_classical\_filter \\
+By motion type & classical/statistical baseline & Wiener filter & window/filter & 0.9392 $\pm$ 0.0000 & 62.0 & 0.0625 & 5 & 0.8139 $\pm$ 0.0000 & 0.2306 $\pm$ 0.0000 & 4.4350 $\pm$ 0.0000 & 0.0 & 0.431 $\pm$ 0.002 & NA & yes\_classical\_filter \\
+\midrule
+Anomaly test-only & proposed causal neural model & TCN-causal & yes & 0.4057 $\pm$ 0.0022 & 0.0 & reference & 0 & 0.8476 $\pm$ 0.0006 & 0.0614 $\pm$ 0.0016 & 8.3192 $\pm$ 0.0629 & 101.3 & 1.429 $\pm$ 0.042 & 1.271 $\pm$ 0.061 & possible\_on\_embedded\_linux \\
+Anomaly test-only & causal neural comparator & Transformer-causal & yes & 0.4434 $\pm$ 0.0068 & 9.3 & <1e-4 & 21 & 0.8413 $\pm$ 0.0023 & 0.0738 $\pm$ 0.0014 & 8.0733 $\pm$ 0.1064 & 399.1 & 1.597 $\pm$ 0.040 & 1.785 $\pm$ 0.041 & possible\_on\_embedded\_linux \\
+Anomaly test-only & causal neural comparator & GRU-causal & yes & 0.4160 $\pm$ 0.0033 & 2.5 & 0.0038 & 21 & 0.8388 $\pm$ 0.0010 & 0.0636 $\pm$ 0.0010 & 8.3140 $\pm$ 0.0293 & 152.1 & 3.130 $\pm$ 0.041 & 0.124 $\pm$ 0.001 & possible\_on\_embedded\_linux \\
+Anomaly test-only & causal neural comparator & LSTM-causal & yes & 0.4252 $\pm$ 0.0021 & 4.8 & <1e-4 & 21 & 0.8358 $\pm$ 0.0007 & 0.0636 $\pm$ 0.0004 & 8.2843 $\pm$ 0.0343 & 202.5 & 1.442 $\pm$ 0.039 & 0.269 $\pm$ 0.017 & possible\_on\_embedded\_linux \\
+Anomaly test-only & causal neural comparator & MLP-causal & yes & 0.7055 $\pm$ 0.0020 & 73.9 & <1e-4 & 21 & 0.7256 $\pm$ 0.0007 & 0.1917 $\pm$ 0.0007 & 6.2863 $\pm$ 0.0870 & 18.2 & 0.134 $\pm$ 0.010 & 0.042 $\pm$ 0.000 & yes\_embedded\_friendly \\
+Anomaly test-only & classical/statistical baseline & Identity/raw & window/filter & 0.8355 $\pm$ 0.0000 & 106.0 & <1e-4 & 21 & 0.7237 $\pm$ 0.0000 & 0.2335 $\pm$ 0.0000 & 1.9772 $\pm$ 0.0000 & 0.0 & 0.001 $\pm$ 0.000 & NA & yes\_classical\_filter \\
+Anomaly test-only & classical/statistical baseline & Moving-average low-pass & window/filter & 0.5743 $\pm$ 0.0000 & 41.5 & <1e-4 & 21 & 0.8378 $\pm$ 0.0000 & 0.1403 $\pm$ 0.0000 & 8.0350 $\pm$ 0.0000 & 0.0 & 0.030 $\pm$ 0.000 & NA & yes\_classical\_filter \\
+Anomaly test-only & classical/statistical baseline & Butterworth low-pass & window/filter & 0.5873 $\pm$ 0.0000 & 44.8 & <1e-4 & 21 & 0.7958 $\pm$ 0.0000 & 0.1284 $\pm$ 0.0000 & 8.1488 $\pm$ 0.0000 & 0.0 & 2.070 $\pm$ 0.011 & NA & yes\_classical\_filter \\
+Anomaly test-only & classical/statistical baseline & Savitzky-Golay & window/filter & 0.6013 $\pm$ 0.0000 & 48.2 & <1e-4 & 21 & 0.7802 $\pm$ 0.0000 & 0.1282 $\pm$ 0.0000 & 8.2564 $\pm$ 0.0000 & 0.0 & 2.092 $\pm$ 0.017 & NA & yes\_classical\_filter \\
+Anomaly test-only & classical/statistical baseline & Wiener filter & window/filter & 0.6683 $\pm$ 0.0000 & 64.7 & <1e-4 & 21 & 0.7351 $\pm$ 0.0000 & 0.1456 $\pm$ 0.0000 & 7.6748 $\pm$ 0.0000 & 0.0 & 0.430 $\pm$ 0.002 & NA & yes\_classical\_filter \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}

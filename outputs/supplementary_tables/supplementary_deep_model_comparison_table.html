@@ -1,0 +1,117 @@
+<table>
+<caption>Supplementary Table S1. Performance and deployment comparison of causal deep learning models and classical/static baselines.</caption>
+<thead><tr><th>Method</th><th>RMSE ↓</th><th>Pearson r ↑</th><th>PSD dist. ↓</th><th>HF imp. ↑</th><th>Params (K)</th><th>FP32 size (MB)</th><th>CPU window (ms) ↓</th><th>Stream (ms/step) ↓</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>TCN-causal</strong></td>
+<td><strong>0.3901 ± 0.0021</strong></td>
+<td><strong>0.8492 ± 0.0006</strong></td>
+<td><strong>0.0539 ± 0.0016</strong></td>
+<td><strong>8.2798 ± 0.0611</strong></td>
+<td>101.3</td>
+<td>0.387</td>
+<td>1.428 ± 0.059</td>
+<td>1.231 ± 0.017</td>
+</tr>
+<tr>
+<td>Transformer-causal</td>
+<td>0.4278 ± 0.0066</td>
+<td>0.8430 ± 0.0023</td>
+<td>0.0661 ± 0.0014</td>
+<td>8.0207 ± 0.1052</td>
+<td>399.1</td>
+<td>1.522</td>
+<td>1.667 ± 0.084</td>
+<td>1.774 ± 0.050</td>
+</tr>
+<tr>
+<td>GRU-causal</td>
+<td>0.4003 ± 0.0032</td>
+<td>0.8404 ± 0.0010</td>
+<td>0.0559 ± 0.0010</td>
+<td>8.2715 ± 0.0279</td>
+<td>152.1</td>
+<td>0.580</td>
+<td>3.179 ± 0.050</td>
+<td>0.128 ± 0.003</td>
+</tr>
+<tr>
+<td>LSTM-causal</td>
+<td>0.4094 ± 0.0020</td>
+<td>0.8373 ± 0.0007</td>
+<td>0.0557 ± 0.0004</td>
+<td>8.2432 ± 0.0354</td>
+<td>202.5</td>
+<td>0.772</td>
+<td>1.442 ± 0.022</td>
+<td>0.283 ± 0.033</td>
+</tr>
+<tr>
+<td>MLP-causal</td>
+<td>0.6886 ± 0.0020</td>
+<td>0.7272 ± 0.0007</td>
+<td>0.1843 ± 0.0007</td>
+<td>6.2755 ± 0.0876</td>
+<td><strong>18.2</strong></td>
+<td><strong>0.069</strong></td>
+<td>0.127 ± 0.001</td>
+<td><strong>0.042 ± 0.000</strong></td>
+</tr>
+<tr>
+<td>Identity/raw</td>
+<td>0.8173</td>
+<td>0.7254</td>
+<td>0.2248</td>
+<td>1.9592</td>
+<td>N/A</td>
+<td>N/A</td>
+<td><strong>0.001 ± 0.000</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Moving-average low-pass</td>
+<td>0.5575</td>
+<td>0.8398</td>
+<td>0.1323</td>
+<td>7.9824</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>0.030 ± 0.000</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Butterworth low-pass</td>
+<td>0.5716</td>
+<td>0.7975</td>
+<td>0.1206</td>
+<td>8.0568</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>2.095 ± 0.021</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Savitzky-Golay</td>
+<td>0.5852</td>
+<td>0.7818</td>
+<td>0.1203</td>
+<td>8.1773</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>2.132 ± 0.031</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Wiener filter</td>
+<td>0.6524</td>
+<td>0.7367</td>
+<td>0.1380</td>
+<td>7.6115</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>0.436 ± 0.006</td>
+<td>N/A</td>
+</tr>
+</tbody>
+<tfoot><tr><td colspan="9">Values are reported as mean ± SD across repeated runs for deep learning models. Classical/static baselines are deterministic for signal metrics; therefore only mean values are reported. Bold values indicate the best result in each column. N/A, not applicable.</td></tr></tfoot>
+</table>
