@@ -1,7 +1,9 @@
 model_name,model_role,architecture_name,num_seeds,parameter_count_mean,parameter_count_std,trainable_parameter_count_mean,trainable_parameter_count_std,parameter_size_mb_fp32_mean,parameter_size_mb_fp32_std,cpu_forward_ms_per_window_mean,cpu_forward_ms_per_window_std,embedded_deployment_verdict
-tcn,trained,tcn,3,101326.0,0.0,101326.0,0.0,0.3865280151367187,0.0,1.3102763270338376,0.014581772457900348,possible_on_embedded_linux
-identity,baseline,identity,3,0.0,0.0,0.0,0.0,0.0,0.0,0.0013472450276215333,1.0039966446562125e-05,yes_classical_filter
-lowpass,baseline,lowpass,3,0.0,0.0,0.0,0.0,0.0,0.0,0.031311990072329765,0.0013578741560551508,yes_classical_filter
-butterworth,baseline,butterworth,3,0.0,0.0,0.0,0.0,0.0,0.0,2.051310489575068,0.013104010872895607,yes_classical_filter
-savgol,baseline,savgol,3,0.0,0.0,0.0,0.0,0.0,0.0,2.111732338865598,0.010463278731347099,yes_classical_filter
-wiener,baseline,wiener,3,0.0,0.0,0.0,0.0,0.0,0.0,0.43052466586232185,0.0006502565824165821,yes_classical_filter
+tcn,trained,tcn,5,101326.0,0.0,101326.0,0.0,0.3865280151367187,0.0,1.355026894249022,0.06586768075797594,possible_on_embedded_linux
+gru,trained_comparison,gru,3,152070.0,0.0,152070.0,0.0,0.5801010131835938,0.0,2.964985448246201,0.04166605766054578,possible_on_embedded_linux
+transformer,trained_comparison,transformer,3,399110.0,0.0,399110.0,0.0,1.5224838256835938,0.0,1.3655953637013833,0.060971003073540087,possible_on_embedded_linux
+identity,baseline,identity,5,0.0,0.0,0.0,0.0,0.0,0.0,0.0014165565371512799,1.052897690577796e-05,yes_classical_filter
+lowpass,baseline,lowpass,5,0.0,0.0,0.0,0.0,0.0,0.0,0.02977791801095006,0.00041092417304769673,yes_classical_filter
+butterworth,baseline,butterworth,5,0.0,0.0,0.0,0.0,0.0,0.0,2.0950305704027414,0.02086644410408834,yes_classical_filter
+savgol,baseline,savgol,5,0.0,0.0,0.0,0.0,0.0,0.0,2.132020982913673,0.030946842987130536,yes_classical_filter
+wiener,baseline,wiener,5,0.0,0.0,0.0,0.0,0.0,0.0,0.43623078241944313,0.00573468270951619,yes_classical_filter

@@ -1,0 +1,24 @@
+{
+  "models": [
+    {
+      "acc_channel_rmse_improvement": 0.8415935594501917,
+      "acc_channel_rmse_mean": 0.675998890877493,
+      "acc_norm_rmse": 0.5328255048359849,
+      "gyr_channel_rmse_improvement": 0.2531870361726676,
+      "gyr_channel_rmse_mean": 0.1523924199839397,
+      "gyr_norm_rmse": 0.1921253260901407,
+      "hf_ratio_improvement_mean": 8.359578633187574,
+      "input_acc_channel_rmse_mean": 1.5175924503276845,
+      "input_acc_norm_rmse": 1.2639799455173248,
+      "input_gyr_channel_rmse_mean": 0.4055794561566073,
+      "input_gyr_norm_rmse": 0.6296109158252916,
+      "input_rmse_mean": 0.961585953242146,
+      "model_name": "gru_causal",
+      "model_role": "trained",
+      "num_windows": 8675,
+      "pearson_mean": 0.838363550459677,
+      "psd_distance_mean": 0.06335751092692879,
+      "rmse_mean": 0.41419565543071635
+    }
+  ]
+}

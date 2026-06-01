@@ -1,2 +1,2 @@
 model_name,model_role,architecture_name,num_seeds,parameter_count_mean,parameter_count_std,trainable_parameter_count_mean,trainable_parameter_count_std,parameter_size_mb_fp32_mean,parameter_size_mb_fp32_std,cpu_forward_ms_per_window_mean,cpu_forward_ms_per_window_std,embedded_deployment_verdict
-lstm_causal,trained,lstm_causal,3,202502.0,0.0,202502.0,0.0,0.7724838256835938,0.0,32.98452680309614,1.3930241704645738,edge_only_or_accelerated
+lstm_causal,trained,lstm_causal,5,202502.0,0.0,202502.0,0.0,0.7724838256835938,0.0,1.4419661359861493,0.0217358198295915,possible_on_embedded_linux

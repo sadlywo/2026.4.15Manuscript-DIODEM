@@ -2,12 +2,12 @@
   "models": [
     {
       "architecture_name": "mlp_causal",
-      "cpu_forward_ms_per_window_mean": 0.16989546517531073,
-      "cpu_forward_ms_per_window_std": 0.11194197776691497,
+      "cpu_forward_ms_per_window_mean": 0.13368785940110678,
+      "cpu_forward_ms_per_window_std": 0.010257488823380645,
       "embedded_deployment_verdict": "yes_embedded_friendly",
       "model_name": "mlp_causal",
       "model_role": "trained",
-      "num_seeds": 3,
+      "num_seeds": 5,
       "parameter_count_mean": 18182.0,
       "parameter_count_std": 0.0,
       "parameter_size_mb_fp32_mean": 0.0693588256835937,

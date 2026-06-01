@@ -2,12 +2,12 @@
   "models": [
     {
       "architecture_name": "lstm_causal",
-      "cpu_forward_ms_per_window_mean": 50.97497206181288,
-      "cpu_forward_ms_per_window_std": 11.61281959219297,
-      "embedded_deployment_verdict": "edge_only_or_accelerated",
+      "cpu_forward_ms_per_window_mean": 1.4417928326874971,
+      "cpu_forward_ms_per_window_std": 0.038601602981514715,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "lstm_causal",
       "model_role": "trained",
-      "num_seeds": 3,
+      "num_seeds": 5,
       "parameter_count_mean": 202502.0,
       "parameter_count_std": 0.0,
       "parameter_size_mb_fp32_mean": 0.7724838256835938,

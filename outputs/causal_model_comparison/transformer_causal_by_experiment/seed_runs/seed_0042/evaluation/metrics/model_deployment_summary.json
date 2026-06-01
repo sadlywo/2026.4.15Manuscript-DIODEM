@@ -2,7 +2,7 @@
   "models": [
     {
       "architecture_name": "transformer_causal",
-      "cpu_forward_ms_per_window": 19.073640778660774,
+      "cpu_forward_ms_per_window": 1.569411139935255,
       "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "transformer_causal",
       "model_role": "trained",

@@ -2,19 +2,17 @@
 
 Each row corresponds to one ablation setting derived from the same attachment-aware TCN backbone. The table reports whether each loss component or latent mechanism is enabled, together with the resulting test performance. Metrics are reported as mean +/- standard deviation across seeds when multi-seed runs are available. Lower RMSE and PSD distance are better, whereas higher HF improvement is better.
 
-| Variant | Latent | L1 | MSE | Deriv. | Spectral | Att-L2 | Att-Temp | RMSE | Delta RMSE vs Full | Pearson | PSD Dist. | Delta PSD vs Full | HF Improve. | Delta HF vs Full | Acc Norm RMSE | Gyr Norm RMSE | Test windows | Seeds |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Full model | Y | Y | Y | Y | Y | Y | Y | 0.3905 +/- 0.0033 | +0.00% | 0.8511 +/- 0.0003 | 0.05560 +/- 0.00198 | +0.00% | 8.291 +/- 0.047 | +0.00% | 0.5195 +/- 0.0019 | 0.1783 +/- 0.0025 | 8633 | 3 |
-| w/o derivative loss | Y | Y | Y | N | Y | Y | Y | 0.3890 +/- 0.0018 | -0.38% | 0.8489 +/- 0.0007 | 0.05314 +/- 0.00075 | -4.43% | 8.311 +/- 0.022 | +0.24% | 0.5198 +/- 0.0012 | 0.1779 +/- 0.0012 | 8633 | 3 |
-| w/o spectral loss | Y | Y | Y | Y | N | Y | Y | 0.3916 +/- 0.0028 | +0.30% | 0.8477 +/- 0.0008 | 0.05963 +/- 0.00073 | +7.24% | 8.254 +/- 0.029 | -0.45% | 0.5201 +/- 0.0023 | 0.1787 +/- 0.0015 | 8633 | 3 |
-| w/o attachment regularization | Y | Y | Y | Y | Y | N | N | 0.3879 +/- 0.0019 | -0.66% | 0.8501 +/- 0.0012 | 0.05338 +/- 0.00088 | -4.00% | 8.310 +/- 0.037 | +0.23% | 0.5182 +/- 0.0031 | 0.1761 +/- 0.0015 | 8633 | 3 |
-| w/o attachment latent | N | Y | Y | Y | Y | N | N | 0.3914 +/- 0.0014 | +0.24% | 0.8507 +/- 0.0009 | 0.05712 +/- 0.00035 | +2.73% | 8.299 +/- 0.021 | +0.10% | 0.5277 +/- 0.0020 | 0.1805 +/- 0.0002 | 8633 | 3 |
-| MSE only | Y | N | Y | N | N | N | N | 0.4082 +/- 0.0043 | +4.54% | 0.8384 +/- 0.0004 | 0.06499 +/- 0.00093 | +16.89% | 8.116 +/- 0.018 | -2.11% | 0.5359 +/- 0.0057 | 0.1836 +/- 0.0015 | 8633 | 3 |
+| Variant | Latent | L1 | MSE | Spectral | RMSE | Delta RMSE vs Full | Pearson | PSD Dist. | Delta PSD vs Full | HF Improve. | Delta HF vs Full | Acc Norm RMSE | Gyr Norm RMSE | Test windows | Seeds |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Full model | Y | Y | Y | Y | 0.3901 +/- 0.0021 | +0.00% | 0.8492 +/- 0.0006 | 0.05392 +/- 0.00165 | +0.00% | 8.280 +/- 0.061 | +0.00% | 0.5190 +/- 0.0021 | 0.1762 +/- 0.0022 | 8633 | 5 |
+| w/o L1 loss | Y | N | Y | Y | 0.3953 +/- 0.0040 | +1.34% | 0.8494 +/- 0.0009 | 0.05444 +/- 0.00120 | +0.98% | 8.288 +/- 0.039 | +0.10% | 0.5305 +/- 0.0012 | 0.1793 +/- 0.0017 | 8633 | 5 |
+| w/o MSE loss | Y | Y | N | Y | 0.3901 +/- 0.0030 | +0.02% | 0.8502 +/- 0.0007 | 0.05390 +/- 0.00165 | -0.03% | 8.280 +/- 0.036 | -0.00% | 0.5235 +/- 0.0048 | 0.1818 +/- 0.0018 | 8633 | 5 |
+| w/o spectral loss | Y | Y | Y | N | 0.3920 +/- 0.0072 | +0.49% | 0.8449 +/- 0.0008 | 0.05686 +/- 0.00113 | +5.45% | 8.199 +/- 0.093 | -0.98% | 0.5193 +/- 0.0059 | 0.1760 +/- 0.0023 | 8633 | 5 |
+| MSE only | Y | N | Y | N | 0.4095 +/- 0.0033 | +4.98% | 0.8381 +/- 0.0008 | 0.06562 +/- 0.00133 | +21.70% | 8.075 +/- 0.043 | -2.47% | 0.5390 +/- 0.0064 | 0.1858 +/- 0.0024 | 8633 | 5 |
+| w/o attachment latent | N | Y | Y | Y | 0.3932 +/- 0.0011 | +0.81% | 0.8483 +/- 0.0005 | 0.05615 +/- 0.00043 | +4.14% | 8.254 +/- 0.024 | -0.32% | 0.5267 +/- 0.0030 | 0.1788 +/- 0.0007 | 8633 | 5 |
 
 Notes:
 - `Latent` indicates whether the attachment latent branch is present.
-- `Deriv.` denotes the temporal derivative consistency term.
-- `Spectral` denotes the frequency-domain consistency term.
-- `Att-L2` and `Att-Temp` denote the latent magnitude and latent temporal smoothness regularizers, respectively.
-- Although removing the spectral term slightly reduces point-wise RMSE, it worsens frequency-domain alignment and high-frequency consistency, which supports retaining the spectral component in the final objective.
-- Using only MSE leads to the clearest overall degradation, indicating that point-wise reconstruction alone is insufficient for stable artifact compensation.
+- `L1`, `MSE`, and `Spectral` indicate whether each active loss term is enabled.
+- The final composite objective contains L1, MSE, and spectral reconstruction terms.
+- `MSE only` is retained as a reconstruction-only reference; the single-term removals isolate the contribution of each loss component.

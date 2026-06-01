@@ -2,8 +2,8 @@
   "models": [
     {
       "architecture_name": "lstm_causal",
-      "cpu_forward_ms_per_window": 31.990978457033634,
-      "embedded_deployment_verdict": "edge_only_or_accelerated",
+      "cpu_forward_ms_per_window": 1.4739897614344954,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "lstm_causal",
       "model_role": "trained",
       "parameter_count": 202502,

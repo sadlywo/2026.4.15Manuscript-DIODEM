@@ -1,6 +1,6 @@
 {
   "ablation_variant": "mse_only",
-  "ablation_variant_description": "Use only MSE reconstruction loss.",
+  "ablation_variant_description": "Use only MSE reconstruction loss as a reconstruction-only reference.",
   "anomaly": {
     "mode": "exclude_all"
   },
@@ -94,11 +94,7 @@
   ],
   "learning_rate": 0.001,
   "loss_weights": {
-    "attach_l2": 0.0,
-    "attach_temporal": 0.0,
-    "derivative": 0.0,
     "mse": 1.0,
-    "smoothness": 0.0,
     "spectral": 0.0,
     "time_l1": 0.0
   },

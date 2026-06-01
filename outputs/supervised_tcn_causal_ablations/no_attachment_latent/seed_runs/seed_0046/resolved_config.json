@@ -94,7 +94,7 @@
   ],
   "learning_rate": 0.001,
   "loss_weights": {
-    "mse": 0.5,
+    "mse": 1.0,
     "spectral": 0.2,
     "time_l1": 1.0
   },
