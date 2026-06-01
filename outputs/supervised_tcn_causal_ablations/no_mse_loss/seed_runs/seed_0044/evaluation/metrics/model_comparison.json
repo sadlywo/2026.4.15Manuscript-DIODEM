@@ -1,24 +1,24 @@
 {
   "models": [
     {
-      "acc_channel_rmse_improvement": 0.8540312585507318,
-      "acc_channel_rmse_mean": 0.636015617082132,
-      "acc_norm_rmse": 0.5254868828818516,
-      "gyr_channel_rmse_improvement": 0.25243713679180757,
-      "gyr_channel_rmse_mean": 0.1413424842425611,
-      "gyr_norm_rmse": 0.18108616461432842,
-      "hf_ratio_improvement_mean": 8.284230704667351,
-      "input_acc_channel_rmse_mean": 1.4900468756328638,
+      "acc_channel_rmse_improvement": 0.8531104330649647,
+      "acc_channel_rmse_mean": 0.6369364425678992,
+      "acc_norm_rmse": 0.522113378144383,
+      "gyr_channel_rmse_improvement": 0.2516952060096756,
+      "gyr_channel_rmse_mean": 0.14208441502469302,
+      "gyr_norm_rmse": 0.18252957175709855,
+      "hf_ratio_improvement_mean": 8.27004990372481,
+      "input_acc_channel_rmse_mean": 1.490046875632864,
       "input_acc_norm_rmse": 1.2493681899278055,
-      "input_gyr_channel_rmse_mean": 0.39377962103436864,
+      "input_gyr_channel_rmse_mean": 0.3937796210343687,
       "input_gyr_norm_rmse": 0.6131447047228668,
-      "input_rmse_mean": 0.9419132483336162,
+      "input_rmse_mean": 0.9419132483336161,
       "model_name": "tcn_causal",
       "model_role": "trained",
       "num_windows": 8633,
-      "pearson_mean": 0.8491043790313858,
-      "psd_distance_mean": 0.05259151848352144,
-      "rmse_mean": 0.3886790506623465
+      "pearson_mean": 0.8489973030145084,
+      "psd_distance_mean": 0.05281039819481538,
+      "rmse_mean": 0.3895104287962961
     }
   ]
 }

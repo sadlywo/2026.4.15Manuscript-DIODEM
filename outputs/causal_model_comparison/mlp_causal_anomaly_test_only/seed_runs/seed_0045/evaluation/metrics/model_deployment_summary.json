@@ -1,0 +1,14 @@
+{
+  "models": [
+    {
+      "architecture_name": "mlp_causal",
+      "cpu_forward_ms_per_window": 0.12960932217538357,
+      "embedded_deployment_verdict": "yes_embedded_friendly",
+      "model_name": "mlp_causal",
+      "model_role": "trained",
+      "parameter_count": 18182,
+      "parameter_size_mb_fp32": 0.06935882568359375,
+      "trainable_parameter_count": 18182
+    }
+  ]
+}

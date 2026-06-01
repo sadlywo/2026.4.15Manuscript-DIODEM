@@ -1,6 +1,6 @@
 {
   "ablation_variant": "no_attachment_latent",
-  "ablation_variant_description": "Disable attachment latent code and its regularization terms.",
+  "ablation_variant_description": "Disable attachment latent code while retaining the final composite loss.",
   "anomaly": {
     "mode": "exclude_all"
   },
@@ -94,11 +94,7 @@
   ],
   "learning_rate": 0.001,
   "loss_weights": {
-    "attach_l2": 0.0,
-    "attach_temporal": 0.0,
-    "derivative": 0.3,
-    "mse": 0.5,
-    "smoothness": 0.0,
+    "mse": 1.0,
     "spectral": 0.2,
     "time_l1": 1.0
   },

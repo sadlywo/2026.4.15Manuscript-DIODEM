@@ -2,7 +2,7 @@
   "models": [
     {
       "architecture_name": "gru_causal",
-      "cpu_forward_ms_per_window": 26.993675976991653,
+      "cpu_forward_ms_per_window": 3.1639456283301115,
       "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "gru_causal",
       "model_role": "trained",

@@ -1,7 +1,9 @@
 model_name,model_role,architecture_name,parameter_count,trainable_parameter_count,parameter_size_mb_fp32,cpu_forward_ms_per_window,embedded_deployment_verdict
-tcn,trained,tcn,101326,101326,0.38652801513671875,1.2860479019582272,possible_on_embedded_linux
-identity,baseline,identity,0,0,0.0,0.001353621482849121,yes_classical_filter
-lowpass,baseline,lowpass,0,0,0.0,0.03028763458132744,yes_classical_filter
-butterworth,baseline,butterworth,0,0,0.0,2.070981916040182,yes_classical_filter
-savgol,baseline,savgol,0,0,0.0,2.0885455422103405,yes_classical_filter
-wiener,baseline,wiener,0,0,0.0,0.4320642352104187,yes_classical_filter
+tcn,trained,tcn,101326,101326,0.38652801513671875,1.3719313964247704,possible_on_embedded_linux
+gru,trained_comparison,gru,152070,152070,0.5801010131835938,3.057481190189719,possible_on_embedded_linux
+transformer,trained_comparison,transformer,399110,399110,1.5224838256835938,1.4033299824222922,possible_on_embedded_linux
+identity,baseline,identity,0,0,0.0,0.0013196002691984177,yes_classical_filter
+lowpass,baseline,lowpass,0,0,0.0,0.02927609719336033,yes_classical_filter
+butterworth,baseline,butterworth,0,0,0.0,2.0495087932795286,yes_classical_filter
+savgol,baseline,savgol,0,0,0.0,2.096425276249647,yes_classical_filter
+wiener,baseline,wiener,0,0,0.0,0.42950280010700226,yes_classical_filter

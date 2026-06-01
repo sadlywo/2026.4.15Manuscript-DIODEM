@@ -1,13 +1,13 @@
 {
   "models": [
     {
-      "acc_channel_rmse_improvement": 1.0874625225417411,
-      "acc_channel_rmse_mean": 0.9379381050570054,
-      "acc_norm_rmse": 0.9341580909222433,
-      "gyr_channel_rmse_improvement": 0.39934970373415396,
-      "gyr_channel_rmse_mean": 0.2538235555498439,
-      "gyr_norm_rmse": 0.3388821102636107,
-      "hf_ratio_improvement_mean": 5.101613890474545,
+      "acc_channel_rmse_improvement": 1.0828441285648085,
+      "acc_channel_rmse_mean": 0.9425564990339379,
+      "acc_norm_rmse": 0.944107452180117,
+      "gyr_channel_rmse_improvement": 0.3984041213476563,
+      "gyr_channel_rmse_mean": 0.25476913793634154,
+      "gyr_norm_rmse": 0.33555275127496553,
+      "hf_ratio_improvement_mean": 5.089326855071257,
       "input_acc_channel_rmse_mean": 2.025400627598747,
       "input_acc_norm_rmse": 2.102935926260422,
       "input_gyr_channel_rmse_mean": 0.6531732592839978,
@@ -16,9 +16,9 @@
       "model_name": "gru_causal",
       "model_role": "trained",
       "num_windows": 3023,
-      "pearson_mean": 0.9051589547791321,
-      "psd_distance_mean": 0.10035332856364347,
-      "rmse_mean": 0.5958808303034246
+      "pearson_mean": 0.9015731389210563,
+      "psd_distance_mean": 0.10349526908601506,
+      "rmse_mean": 0.5986628184851397
     }
   ]
 }

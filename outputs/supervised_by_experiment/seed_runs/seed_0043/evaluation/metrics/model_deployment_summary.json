@@ -2,7 +2,7 @@
   "models": [
     {
       "architecture_name": "tcn",
-      "cpu_forward_ms_per_window": 1.3297559693455696,
+      "cpu_forward_ms_per_window": 1.3678572932258248,
       "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "tcn",
       "model_role": "trained",
@@ -11,8 +11,28 @@
       "trainable_parameter_count": 101326
     },
     {
+      "architecture_name": "gru",
+      "cpu_forward_ms_per_window": 2.9226113809272647,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "gru",
+      "model_role": "trained_comparison",
+      "parameter_count": 152070,
+      "parameter_size_mb_fp32": 0.5801010131835938,
+      "trainable_parameter_count": 152070
+    },
+    {
+      "architecture_name": "transformer",
+      "cpu_forward_ms_per_window": 1.439899131655693,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "transformer",
+      "model_role": "trained_comparison",
+      "parameter_count": 399110,
+      "parameter_size_mb_fp32": 1.5224838256835938,
+      "trainable_parameter_count": 399110
+    },
+    {
       "architecture_name": "identity",
-      "cpu_forward_ms_per_window": 0.0013485178351402283,
+      "cpu_forward_ms_per_window": 0.001406269147992134,
       "embedded_deployment_verdict": "yes_classical_filter",
       "model_name": "identity",
       "model_role": "baseline",
@@ -22,7 +42,7 @@
     },
     {
       "architecture_name": "lowpass",
-      "cpu_forward_ms_per_window": 0.029686111956834793,
+      "cpu_forward_ms_per_window": 0.029126540757715702,
       "embedded_deployment_verdict": "yes_classical_filter",
       "model_name": "lowpass",
       "model_role": "baseline",
@@ -32,7 +52,7 @@
     },
     {
       "architecture_name": "butterworth",
-      "cpu_forward_ms_per_window": 2.0528763718903065,
+      "cpu_forward_ms_per_window": 2.107344320975244,
       "embedded_deployment_verdict": "yes_classical_filter",
       "model_name": "butterworth",
       "model_role": "baseline",
@@ -42,7 +62,7 @@
     },
     {
       "architecture_name": "savgol",
-      "cpu_forward_ms_per_window": 2.106568031013012,
+      "cpu_forward_ms_per_window": 2.1211871691048145,
       "embedded_deployment_verdict": "yes_classical_filter",
       "model_name": "savgol",
       "model_role": "baseline",
@@ -52,7 +72,7 @@
     },
     {
       "architecture_name": "wiener",
-      "cpu_forward_ms_per_window": 0.43142523616552353,
+      "cpu_forward_ms_per_window": 0.4327497212216258,
       "embedded_deployment_verdict": "yes_classical_filter",
       "model_name": "wiener",
       "model_role": "baseline",

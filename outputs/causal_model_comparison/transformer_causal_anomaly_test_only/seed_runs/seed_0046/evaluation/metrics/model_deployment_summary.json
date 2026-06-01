@@ -1,0 +1,14 @@
+{
+  "models": [
+    {
+      "architecture_name": "transformer_causal",
+      "cpu_forward_ms_per_window": 1.6299999225884676,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "transformer_causal",
+      "model_role": "trained",
+      "parameter_count": 399110,
+      "parameter_size_mb_fp32": 1.5224838256835938,
+      "trainable_parameter_count": 399110
+    }
+  ]
+}

@@ -2,12 +2,12 @@
   "models": [
     {
       "architecture_name": "gru_causal",
-      "cpu_forward_ms_per_window_mean": 35.67862461010615,
-      "cpu_forward_ms_per_window_std": 3.872020983936342,
-      "embedded_deployment_verdict": "edge_only_or_accelerated",
+      "cpu_forward_ms_per_window_mean": 3.296341863460839,
+      "cpu_forward_ms_per_window_std": 0.053571578625330026,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "gru_causal",
       "model_role": "trained",
-      "num_seeds": 3,
+      "num_seeds": 5,
       "parameter_count_mean": 152070.0,
       "parameter_count_std": 0.0,
       "parameter_size_mb_fp32_mean": 0.5801010131835938,

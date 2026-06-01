@@ -2,7 +2,7 @@
   "models": [
     {
       "architecture_name": "mlp_causal",
-      "cpu_forward_ms_per_window": 0.09269241243600845,
+      "cpu_forward_ms_per_window": 0.12872387189418077,
       "embedded_deployment_verdict": "yes_embedded_friendly",
       "model_name": "mlp_causal",
       "model_role": "trained",

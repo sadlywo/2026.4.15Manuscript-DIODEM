@@ -1,2 +1,2 @@
 model_name,model_role,architecture_name,parameter_count,trainable_parameter_count,parameter_size_mb_fp32,cpu_forward_ms_per_window,embedded_deployment_verdict
-lstm_causal,trained,lstm_causal,202502,202502,0.7724838256835938,34.928363002836704,edge_only_or_accelerated
+lstm_causal,trained,lstm_causal,202502,202502,0.7724838256835938,1.4482854818925261,possible_on_embedded_linux

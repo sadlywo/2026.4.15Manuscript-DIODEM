@@ -2,7 +2,7 @@
   "models": [
     {
       "architecture_name": "tcn_causal",
-      "cpu_forward_ms_per_window": 17.01113048940897,
+      "cpu_forward_ms_per_window": 1.3490518601611257,
       "embedded_deployment_verdict": "possible_on_embedded_linux",
       "model_name": "tcn_causal",
       "model_role": "trained",

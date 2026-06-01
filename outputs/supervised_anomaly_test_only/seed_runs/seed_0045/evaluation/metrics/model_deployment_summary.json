@@ -1,0 +1,64 @@
+{
+  "models": [
+    {
+      "architecture_name": "tcn",
+      "cpu_forward_ms_per_window": 1.3713988289237022,
+      "embedded_deployment_verdict": "possible_on_embedded_linux",
+      "model_name": "tcn",
+      "model_role": "trained",
+      "parameter_count": 101326,
+      "parameter_size_mb_fp32": 0.38652801513671875,
+      "trainable_parameter_count": 101326
+    },
+    {
+      "architecture_name": "identity",
+      "cpu_forward_ms_per_window": 0.0014504604041576385,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "identity",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "lowpass",
+      "cpu_forward_ms_per_window": 0.030293338932096958,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "lowpass",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "butterworth",
+      "cpu_forward_ms_per_window": 2.0610199496150017,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "butterworth",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "savgol",
+      "cpu_forward_ms_per_window": 2.1166891139000654,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "savgol",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    },
+    {
+      "architecture_name": "wiener",
+      "cpu_forward_ms_per_window": 0.43132007122039795,
+      "embedded_deployment_verdict": "yes_classical_filter",
+      "model_name": "wiener",
+      "model_role": "baseline",
+      "parameter_count": 0,
+      "parameter_size_mb_fp32": 0.0,
+      "trainable_parameter_count": 0
+    }
+  ]
+}
