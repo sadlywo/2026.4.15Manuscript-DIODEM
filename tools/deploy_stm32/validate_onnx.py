@@ -34,6 +34,21 @@ def compute_metrics(reference: np.ndarray, actual: np.ndarray) -> Dict[str, Any]
     }
 
 
+def run_onnx_inference(session: Any, input_name: str, normalized: np.ndarray) -> np.ndarray:
+    expected_shape = session.get_inputs()[0].shape
+    expected_batch = expected_shape[0] if expected_shape else None
+    normalized = normalized.astype(np.float32)
+
+    if isinstance(expected_batch, int) and expected_batch > 0 and expected_batch != normalized.shape[0]:
+        outputs = []
+        for index in range(normalized.shape[0]):
+            window = normalized[index : index + 1]
+            outputs.append(session.run(None, {input_name: window})[0])
+        return np.concatenate(outputs, axis=0)
+
+    return session.run(None, {input_name: normalized})[0]
+
+
 def validate_onnx(
     checkpoint: Path,
     onnx_model: Path,
@@ -62,7 +77,8 @@ def validate_onnx(
     onnx.checker.check_model(str(onnx_model))
     session = ort.InferenceSession(str(onnx_model), providers=["CPUExecutionProvider"])
     input_name = session.get_inputs()[0].name
-    onnx_output = session.run(None, {input_name: normalized.astype(np.float32)})[0]
+    onnx_input_shape = session.get_inputs()[0].shape
+    onnx_output = run_onnx_inference(session, input_name, normalized)
     onnx_physical = denormalize_outputs(onnx_output, stats)
 
     return {
@@ -71,6 +87,7 @@ def validate_onnx(
         "split": split,
         "num_windows": int(raw_windows.shape[0]),
         "input_shape": list(normalized.shape),
+        "onnx_input_shape": list(onnx_input_shape),
         "output_shape": list(onnx_output.shape),
         "model_name": str(config.get("model_name")),
         "output_mode": output_mode,

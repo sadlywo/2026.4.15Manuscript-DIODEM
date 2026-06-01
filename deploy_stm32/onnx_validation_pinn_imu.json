@@ -1,0 +1,48 @@
+{
+  "checkpoint": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\supervised_tcn_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+  "input_shape": [
+    16,
+    64,
+    6
+  ],
+  "model_name": "tcn_causal",
+  "normalized_metrics": {
+    "max_abs_error": 2.384185791015625e-07,
+    "mean_abs_error": 5.195033736526966e-08,
+    "per_channel_rmse": [
+      3.632158041000366e-08,
+      1.059581506979157e-07,
+      1.043081283569336e-07,
+      4.448954271651928e-08,
+      5.0162441311840666e-08,
+      5.8551236747916846e-08
+    ],
+    "rmse": 7.228463516639749e-08
+  },
+  "num_windows": 16,
+  "onnx_input_shape": [
+    1,
+    64,
+    6
+  ],
+  "onnx_model": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\deploy_stm32\\tcn_causal_last_step.onnx",
+  "output_mode": "last_step",
+  "output_shape": [
+    16,
+    6
+  ],
+  "physical_metrics": {
+    "max_abs_error": 1.430511474609375e-06,
+    "mean_abs_error": 2.0266452338546515e-07,
+    "per_channel_rmse": [
+      2.0774548659119318e-07,
+      6.167352921693237e-07,
+      6.419616624953051e-07,
+      7.536235813176972e-08,
+      5.771429911760606e-08,
+      5.571576977558834e-08
+    ],
+    "rmse": 3.758878506232577e-07
+  },
+  "split": "test"
+}

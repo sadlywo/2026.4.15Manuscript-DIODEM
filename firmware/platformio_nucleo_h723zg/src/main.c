@@ -249,6 +249,10 @@ void HardFault_Handler(void) {
   fault_loop("HF\r\n");
 }
 
+void SysTick_Handler(void) {
+  HAL_IncTick();
+}
+
 void MemManage_Handler(void) {
   fault_loop("MM\r\n");
 }
