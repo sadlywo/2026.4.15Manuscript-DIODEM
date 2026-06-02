@@ -51,26 +51,27 @@ void DiodeM_DenormalizeOutput(float output[DIODEM_AI_CHANNELS]) {
 DiodeMStreamStatus DiodeM_Stream_Push(DiodeMImuStream *stream,
                                       const float raw_sample[DIODEM_AI_CHANNELS],
                                       DiodeMAiOutput *output) {
+  float normalized_sample[DIODEM_AI_CHANNELS];
+
   if (stream == NULL || raw_sample == NULL || output == NULL) {
     return DIODEM_STREAM_ERROR;
   }
 
   for (uint32_t c = 0U; c < DIODEM_AI_CHANNELS; ++c) {
     stream->ring[stream->write_index][c] = raw_sample[c];
+    normalized_sample[c] = (raw_sample[c] - kInputMean[c]) / kInputStd[c];
   }
   stream->write_index = (stream->write_index + 1U) % DIODEM_AI_WINDOW_SIZE;
   stream->samples_seen += 1U;
+
+  if (!DiodeM_AI_RunStep(normalized_sample, output)) {
+    return DIODEM_STREAM_ERROR;
+  }
 
   if (stream->samples_seen < DIODEM_AI_WINDOW_SIZE) {
     return DIODEM_STREAM_WARMUP;
   }
 
-  float normalized_window[DIODEM_AI_WINDOW_SIZE][DIODEM_AI_CHANNELS];
-  DiodeM_NormalizeWindow(stream, normalized_window);
-  if (!DiodeM_AI_RunWindow(normalized_window, output)) {
-    return DIODEM_STREAM_ERROR;
-  }
   DiodeM_DenormalizeOutput(output->values);
   return DIODEM_STREAM_OK;
 }
-

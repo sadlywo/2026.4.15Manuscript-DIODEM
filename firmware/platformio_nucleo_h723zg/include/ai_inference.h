@@ -13,8 +13,9 @@ typedef struct {
 } DiodeMAiOutput;
 
 bool DiodeM_AI_Init(void);
+bool DiodeM_AI_RunStep(const float normalized_sample[DIODEM_AI_CHANNELS],
+                       DiodeMAiOutput *output);
 bool DiodeM_AI_RunWindow(const float normalized_window[DIODEM_AI_WINDOW_SIZE][DIODEM_AI_CHANNELS],
                          DiodeMAiOutput *output);
 
 #endif
-

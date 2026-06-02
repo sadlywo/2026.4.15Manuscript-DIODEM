@@ -76,6 +76,19 @@ def test_stm32_csv_loader_accepts_prediction_columns(tmp_path):
     assert np.allclose(loaded[0], [1, 2, 3, 4, 5, 6])
 
 
+def test_serial_replay_parses_firmware_ok_line():
+    from serial_replay_stm32 import format_sample, is_firmware_response, parse_ok_line
+
+    parsed = parse_ok_line("63,OK,0.1,-0.2,9.8,0.01,0.02,-0.03,12345")
+
+    assert parsed is not None
+    assert parsed.seq == 63
+    assert parsed.inference_us == 12345
+    assert np.allclose(parsed.values, [0.1, -0.2, 9.8, 0.01, 0.02, -0.03])
+    assert format_sample(np.arange(6, dtype=np.float32)) == "0,1,2,3,4,5\n"
+    assert is_firmware_response("ERR,bad_csv")
+
+
 def test_audit_report_records_missing_torch_without_crashing(tmp_path, monkeypatch):
     from audit_model import build_audit_report
 

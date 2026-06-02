@@ -1,0 +1,29 @@
+{
+  "checked_steps": 64,
+  "checkpoint": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\outputs\\_archive\\2026-06-01_result_cleanup\\supervised_tcn_causal_by_experiment\\seed_runs\\seed_0042\\training\\checkpoints\\best.pt",
+  "last_step_max_abs_error": 5.960464477539063e-08,
+  "max_abs_error": 2.980232238769531e-07,
+  "model_config": {
+    "attach_latent_dim": 8,
+    "butter_cutoff_hz": 5.0,
+    "butter_order": 4,
+    "causal": true,
+    "dropout": 0.1,
+    "gru_hidden_dim": 128,
+    "gru_num_layers": 2,
+    "hidden_dim": 64,
+    "kernel_size": 3,
+    "mlp_hidden_dim": 128,
+    "num_layers": 4,
+    "savgol_polyorder": 3,
+    "savgol_window_length": 9,
+    "transformer_ff_dim": 256,
+    "transformer_model_dim": 128,
+    "transformer_num_heads": 4,
+    "transformer_num_layers": 3,
+    "wiener_window_size": 7
+  },
+  "model_name": "tcn_causal",
+  "rmse": 5.691617843694985e-08,
+  "vectors_path": "E:\\VSCode_Study\\2026.4.15Manuscript-DIODEM\\deploy_stm32\\test_vectors\\stm32_golden_vectors.npz"
+}

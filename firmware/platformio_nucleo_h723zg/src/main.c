@@ -12,6 +12,8 @@
 
 static DiodeMImuStream g_stream;
 
+static void CPU_CACHE_Enable(void);
+static void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART3_Polling_Init(void);
 static void Error_Handler(void);
@@ -21,11 +23,14 @@ static bool uart_read_char(uint8_t *ch);
 static bool uart_read_line(char *buffer, size_t buffer_size);
 static bool parse_sample_csv(const char *line, float sample[DIODEM_AI_CHANNELS]);
 static void print_result(uint32_t seq, DiodeMStreamStatus status, const DiodeMAiOutput *output);
+static void print_clock_info(void);
 static void fault_loop(const char *code);
 
 int main(void) {
+  CPU_CACHE_Enable();
   HAL_Init();
   MX_GPIO_Init();
+  SystemClock_Config();
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   MX_USART3_Polling_Init();
 
@@ -35,7 +40,8 @@ int main(void) {
   }
 
   HAL_Delay(20U);
-  uart_write("BOOT_DIAG_V3\r\n");
+  uart_write("BOOT_DIAG_V4\r\n");
+  print_clock_info();
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 
   uint32_t seq = 0U;
@@ -59,6 +65,57 @@ int main(void) {
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
       uart_write("HB3\r\n");
     }
+  }
+}
+
+static void CPU_CACHE_Enable(void) {
+  SCB_EnableICache();
+  SCB_EnableDCache();
+}
+
+static void SystemClock_Config(void) {
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  if (HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY) != HAL_OK) {
+    Error_Handler();
+  }
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE0) != HAL_OK) {
+    Error_Handler();
+  }
+
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 68;
+  RCC_OscInitStruct.PLL.PLLFRACN = 6144;
+  RCC_OscInitStruct.PLL.PLLP = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLR = 2;
+  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
+  RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+    Error_Handler();
+  }
+
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK |
+                                RCC_CLOCKTYPE_HCLK |
+                                RCC_CLOCKTYPE_D1PCLK1 |
+                                RCC_CLOCKTYPE_PCLK1 |
+                                RCC_CLOCKTYPE_PCLK2 |
+                                RCC_CLOCKTYPE_D3PCLK1;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
+  RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK) {
+    Error_Handler();
   }
 }
 
@@ -174,6 +231,16 @@ static void print_result(uint32_t seq, DiodeMStreamStatus status, const DiodeMAi
            output->values[4],
            output->values[5],
            (unsigned long)output->inference_us);
+  uart_write(buffer);
+}
+
+static void print_clock_info(void) {
+  char buffer[160];
+  snprintf(buffer, sizeof(buffer), "CLK,core=%lu,sys=%lu,hclk=%lu,pclk1=%lu\r\n",
+           (unsigned long)SystemCoreClock,
+           (unsigned long)HAL_RCC_GetSysClockFreq(),
+           (unsigned long)HAL_RCC_GetHCLKFreq(),
+           (unsigned long)HAL_RCC_GetPCLK1Freq());
   uart_write(buffer);
 }
 
